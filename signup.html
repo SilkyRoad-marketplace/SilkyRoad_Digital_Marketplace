@@ -1,6 +1,6 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sign Up - Silky Road</title><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="icon" href="/favicon.ico">
+<link rel="icon" href="/favicon.png">
 <title>Silky Road</title>
 <style>
 body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f9;color:#222}
@@ -21,4 +21,6 @@ input, textarea{width:100%;padding:8px;margin-bottom:8px;border:1px solid #cfcfd
 small{color:#666}
 .notice{background:#fff3cd;padding:10px;border:1px solid #ffeeba;margin-bottom:12px}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
 </head><body><header class="header"><div class="container"><nav><div class="logo"><strong>Silky Road</strong></div><div class="links"><a href="index.html">Home</a><a href="contact.html">Contact Us</a><a href="seller.html">Become a Seller</a><a href="dashboard.html"><button>Seller Login</button></a></div></nav></div></header><div class="banner"><img src="banner.jpg" alt="Banner"></div><main class="container"><h2>Sign Up</h2><p>To sign up as a seller, click the button below; it will redirect you to your Supabase Auth signup page (you must set SUPABASE_AUTH_URL in <code>js/supabase-config.js</code> or configure an OAuth flow).</p><p><a id="signupBtn" href="#"><button>Sign up (Supabase)</button></a></p></main><footer class="footer">Silky Road Demo</footer><script src="js/supabase-config.js"></script><script>document.getElementById('signupBtn').href = SUPABASE_AUTH_URL || '#';</script></body></html>
