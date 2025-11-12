@@ -29,6 +29,7 @@ small{color:#666}
   <button id="logoutBtn" style="background:#f44336;">Logout</button>
 </div>
 <body><header class="header"><div class="container"><nav><div class="logo"><strong>Silky Road</strong></div><div class="links"><a href="index.html">Home</a><a href="contact.html">Contact Us</a><a href="seller.html">Become a Seller</a><a href="dashboard.html"><button>Seller Login</button></a></div></nav></div></header><div class="banner"><img src="banner.jpg" alt="Banner"></div><main class="container"><h2>Seller Dashboard</h2><p>This page is a demo. In a full setup this page would require seller authentication (Supabase Auth) and show seller's products, sales, payouts.</p><div id="salesArea"></div></main><footer class="footer">Silky Road Demo</footer><script src="https://unpkg.com/@supabase/supabase-js/dist/umd/supabase.js"></script><script src="js/supabase-config.js"></script><script>
+<script src="js/dashboard-auth.js"></script>
 const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 async function loadSales(){
   document.getElementById('salesArea').textContent = 'Loading sales (demo)...';
