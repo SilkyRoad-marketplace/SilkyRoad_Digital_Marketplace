@@ -1,11 +1,9 @@
-/* Logo styling */
 .logo-img {
-  height: 39px;   /* fixed size */
+  height: 39px;
   width: auto;
   vertical-align: middle;
 }
 
-/* Footer styling */
 .footer {
   position: relative;
   color: #fff;
@@ -14,8 +12,8 @@
   padding: 12px;
 }
 
-/* Replace footer text dynamically */
 .footer::after {
   content: "Silky Road © 2025-2026";
   display: block;
 }
+
