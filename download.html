@@ -1,6 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Download - Silky Road</title><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="/favicon.png">
+<link rel="stylesheet" href="styles.css">
 <title>Silky Road</title>
 <style>
 body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f9;color:#222}
@@ -34,7 +35,7 @@ small{color:#666}
     .then(d => document.getElementById("header").innerHTML = d)
     .catch(e => console.error("Header load failed:", e));
 </script>
- <div class="banner"><img src="banner.jpg" alt="Banner"></div><main class="container"><h2>Download</h2><p>This page reads a query parameter <code>?file=FILENAME</code> and attempts to create a signed URL from Supabase storage. Links are set to expire after 3 days (72*3600 seconds).</p><div id="result"></div></main><footer class="footer">Silky Road Demo</footer><script src="https://unpkg.com/@supabase/supabase-js/dist/umd/supabase.js"></script><script src="js/supabase-config.js"></script><script>
+ <div class="banner"><img src="banner.jpg" alt="Banner"></div><main class="container"><h2>Download</h2><p>This page reads a query parameter <code>?file=FILENAME</code> and attempts to create a signed URL from Supabase storage. Links are set to expire after 3 days (72*3600 seconds).</p><div id="result"></div></main><footer class="footer"></footer><script src="https://unpkg.com/@supabase/supabase-js/dist/umd/supabase.js"></script><script src="js/supabase-config.js"></script><script>
 const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const params = new URLSearchParams(location.search);
 const file = params.get('file');
