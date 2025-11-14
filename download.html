@@ -21,7 +21,15 @@ input, textarea{width:100%;padding:8px;margin-bottom:8px;border:1px solid #cfcfd
 small{color:#666}
 .notice{background:#fff3cd;padding:10px;border:1px solid #ffeeba;margin-bottom:12px}
 </style>
-</head><body><header class="header"><div class="container"><nav><div class="logo"><strong>Silky Road</strong></div><div class="links"><a href="index.html">Home</a><a href="contact.html">Contact Us</a><a href="seller.html">Become a Seller</a><a href="dashboard.html"><button>Seller Login</button></a></div></nav></div></header><div class="banner"><img src="banner.jpg" alt="Banner"></div><main class="container"><h2>Download</h2><p>This page reads a query parameter <code>?file=FILENAME</code> and attempts to create a signed URL from Supabase storage. Links are set to expire after 3 days (72*3600 seconds).</p><div id="result"></div></main><footer class="footer">Silky Road Demo</footer><script src="https://unpkg.com/@supabase/supabase-js/dist/umd/supabase.js"></script><script src="js/supabase-config.js"></script><script>
+</head><body>
+ <div id="header"></div>
+<script>
+  fetch("header.html?v=2")
+    .then(r => r.text())
+    .then(d => document.getElementById("header").innerHTML = d)
+    .catch(e => console.error("Header load failed:", e));
+</script>
+ <div class="banner"><img src="banner.jpg" alt="Banner"></div><main class="container"><h2>Download</h2><p>This page reads a query parameter <code>?file=FILENAME</code> and attempts to create a signed URL from Supabase storage. Links are set to expire after 3 days (72*3600 seconds).</p><div id="result"></div></main><footer class="footer">Silky Road Demo</footer><script src="https://unpkg.com/@supabase/supabase-js/dist/umd/supabase.js"></script><script src="js/supabase-config.js"></script><script>
 const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const params = new URLSearchParams(location.search);
 const file = params.get('file');
