@@ -30,6 +30,11 @@ button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;border-radius
 }
 
 .footer{background:#222;color:#fff;padding:12px;margin-top:20px;text-align:center}
+/* Logo styling */
+.logo-img {
+  height: 39px; /* Adjust the logo size */
+  width: auto;
+  vertical-align: middle;
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -39,19 +44,14 @@ button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;border-radius
 
 <body>
 
-<header class="header">
-  <div class="container">
-    <nav>
-      <div class="logo"><strong>Silky Road</strong></div>
-      <div class="links">
-        <a href="index.html">Home</a>
-        <a href="contact.html">Contact Us</a>
-        <a href="seller.html">Become a Seller</a>
-        <a href="dashboard.html"><button>Seller Login</button></a>
-      </div>
-    </nav>
-  </div>
-</header>
+<div id="header"></div>
+<script>
+  fetch("header.html?v=1")
+    .then(r => r.text())
+    .then(d => document.getElementById("header").innerHTML = d)
+    .catch(e => console.error("Header load failed:", e));
+</script>
+
 
 <main class="container">
 
