@@ -25,11 +25,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const title = document.getElementById("product-title").value;
     const category = document.getElementById("product-category").value;
+    const sub_category = document.getElementById("product-sub-category").value;
     const price = parseFloat(document.getElementById("product-price").value) || 0;
     const file = document.getElementById("product-file").files[0];
 
     if (!category) {
       alert("Please select a category.");
+      return;
+    }
+
+    if (!sub_category) {
+      alert("Please select a sub-category.");
       return;
     }
 
@@ -55,7 +61,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         bucket: bucketName,
         seller_id: user.id,
         price,
-        category
+        category,
+        sub_category,
+        created_at: new Date()
       }]);
 
     if (error) {
