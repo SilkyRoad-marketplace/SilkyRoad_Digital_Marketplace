@@ -31,19 +31,14 @@ button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;border-radius
 </head>
 <body>
 
-<header class="header">
-  <div class="container">
-    <nav>
-      <div class="logo"><strong>Silky Road</strong></div>
-      <div class="links">
-        <a href="index.html">Home</a>
-        <a href="contact.html">Contact Us</a>
-        <a href="seller.html">Become a Seller</a>
-        <a href="dashboard.html"><button>Seller Login</button></a>
-      </div>
-    </nav>
-  </div>
-</header>
+<div id="header"></div>
+<script>
+  fetch("header.html?v=1")
+    .then(r => r.text())
+    .then(d => document.getElementById("header").innerHTML = d)
+    .catch(e => console.error("Header load failed:", e));
+</script>
+
 
 <main class="container">
   <h2 id="category-title">Category</h2>
