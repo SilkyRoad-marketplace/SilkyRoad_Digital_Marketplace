@@ -17,6 +17,16 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
 nav{display:flex;align-items:center;justify-content:space-between}
 nav .links a{margin-left:12px;text-decoration:none;color:#333;font-weight:600}
 
+/* FORCE SELLER LOGIN BUTTON BLUE */
+nav .links button {
+  background:#2b6ef6 !important;
+  color:#fff !important;
+  border:none !important;
+  padding:10px 14px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
 .banner{position:relative}
 .banner img{width:100%;height:auto;display:block}
 
@@ -35,7 +45,7 @@ nav .links a{margin-left:12px;text-decoration:none;color:#333;font-weight:600}
   background:#fff;
   padding:12px;
   border:1px solid #e6e6ea;
-  width:calc(25% - 9px); /* 4 per row */
+  width:calc(25% - 9px); /* 4 per row desktop */
   box-sizing:border-box;
 }
 
@@ -54,13 +64,17 @@ nav .links a{margin-left:12px;text-decoration:none;color:#333;font-weight:600}
   gap:20px;
   font-weight:bold;
   position:relative;
+  flex-wrap:nowrap;
 }
 
+/* Category blocks */
 .category-bar > div{
   position:relative;
   cursor:pointer;
+  white-space:nowrap;
 }
 
+/* Dropdown menu */
 .category-bar div ul{
   display:none;
   position:absolute;
@@ -81,6 +95,28 @@ nav .links a{margin-left:12px;text-decoration:none;color:#333;font-weight:600}
   padding:6px 0;
 }
 .category-bar a{text-decoration:none;color:#333;font-weight:normal;}
+
+/* ------------------------------- */
+/* ⭐ MOBILE FIX FOR CATEGORY BAR  */
+/* Makes 2 rows & prevents overflow */
+/* ------------------------------- */
+@media(max-width:600px){
+
+  .category-bar {
+    flex-wrap:wrap;
+    gap:10px;
+  }
+
+  .category-bar > div {
+    width:48%; /* 2 items per row */
+    padding:6px 0;
+  }
+
+  .category-bar div ul {
+    position:relative; /* dropdown stays inside phone width */
+    width:100%;
+  }
+}
 
 .footer{background:#222;color:#fff;padding:12px;margin-top:20px;text-align:center}
 
