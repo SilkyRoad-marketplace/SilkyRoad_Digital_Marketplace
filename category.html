@@ -57,17 +57,27 @@ button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;border-radius
 </footer>
 
 <script>
-// Get category type from URL
+// Read category & sub-category from URL
 const urlParams = new URLSearchParams(window.location.search);
-const categoryType = urlParams.get('type') || 'all';
-document.getElementById('category-title').textContent = `Category: ${categoryType.charAt(0).toUpperCase() + categoryType.slice(1)}`;
+const categoryType = urlParams.get('category') || 'all';
+const subCategoryType = urlParams.get('sub') || null;
+
+// Update title
+document.getElementById('category-title').textContent = 
+  `Category: ${categoryType}${subCategoryType ? ' → ' + subCategoryType : ''}`;
 
 // Fetch products from Supabase
 async function loadCategoryProducts() {
-  const { data: products, error } = await supabase
-    .from('products')
-    .select('*')
-    .eq('category', categoryType); // Make sure you have 'category' column in products table
+  let query = supabase.from('products').select('*');
+
+  if (categoryType !== 'all') {
+    query = query.eq('category', categoryType);
+  }
+  if (subCategoryType) {
+    query = query.eq('sub_category', subCategoryType);
+  }
+
+  const { data: products, error } = await query;
 
   const container = document.getElementById('category-products');
   container.innerHTML = '';
@@ -95,6 +105,7 @@ async function loadCategoryProducts() {
   });
 }
 
+// Load products
 loadCategoryProducts();
 </script>
 
