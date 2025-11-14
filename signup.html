@@ -18,6 +18,11 @@
     h2 {margin-top:20px;}
     form {background:#fff; padding:16px; border:1px solid #e6e6ea; border-radius:8px; max-width:400px;}
     #message {margin-top:12px; font-weight:bold;}
+  /* Logo styling */
+.logo-img {
+  height: 39px; /* Adjust the logo size */
+  width: auto;
+  vertical-align: middle;
   </style>
 
   <!-- Supabase SDK + Config -->
@@ -26,19 +31,13 @@
 </head>
 
 <body>
-  <header class="header">
-    <div class="container">
-      <nav>
-        <div class="logo"><strong>Silky Road</strong></div>
-        <div class="links">
-          <a href="index.html">Home</a>
-          <a href="contact.html">Contact Us</a>
-          <a href="seller.html">Become a Seller</a>
-          <a href="dashboard.html"><button>Seller Login</button></a>
-        </div>
-      </nav>
-    </div>
-  </header>
+ <div id="header"></div>
+<script>
+  fetch("header.html?v=1")
+    .then(r => r.text())
+    .then(d => document.getElementById("header").innerHTML = d)
+    .catch(e => console.error("Header load failed:", e));
+</script>
 
   <div class="banner">
     <img src="banner.jpg" alt="Banner">
