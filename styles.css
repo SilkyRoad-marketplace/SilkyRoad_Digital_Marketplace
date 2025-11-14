@@ -1,7 +1,5 @@
-/* Logo styling */
 .logo-img {
-  height: 39px; /* Set logo height */
-  width: auto;  /* Keep proportions */
+  height: 39px !important;  /* force the size */
+  width: auto;
   vertical-align: middle;
 }
-
