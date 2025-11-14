@@ -57,14 +57,15 @@ button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;border-radius
 </footer>
 
 <script>
-// Read category & sub-category from URL
+// Get category and sub-category from URL
 const urlParams = new URLSearchParams(window.location.search);
 const categoryType = urlParams.get('category') || 'all';
-const subCategoryType = urlParams.get('sub') || null;
+const subCategoryType = urlParams.get('sub') || '';
 
-// Update title
 document.getElementById('category-title').textContent = 
-  `Category: ${categoryType}${subCategoryType ? ' → ' + subCategoryType : ''}`;
+  subCategoryType 
+    ? `Category: ${categoryType} > ${subCategoryType}` 
+    : `Category: ${categoryType}`;
 
 // Fetch products from Supabase
 async function loadCategoryProducts() {
@@ -105,7 +106,6 @@ async function loadCategoryProducts() {
   });
 }
 
-// Load products
 loadCategoryProducts();
 </script>
 
