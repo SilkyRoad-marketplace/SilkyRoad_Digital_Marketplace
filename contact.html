@@ -49,59 +49,33 @@ small{color:#666}
 
 <div class="banner"><img src="banner.jpg" alt="Banner"></div>
 
-<main class="container">
-  <h2>Contact Us</h2>
+<div class="container" style="max-width:600px;margin-top:40px;">
+  <h1>Contact Us</h1>
   <p>Fill in the form below to contact us.</p>
 
-  <form id="contactForm">
-    <label>First Name<input id="firstName" required></label>
-    <label>Last Name<input id="lastName" required></label>
-    <label>Email Address<input id="email" type="email" required></label>
-    <label>Message<textarea id="message" rows="6" required></textarea></label>
-    <input type="submit" value="Send">
+  <!-- ✅ Replace YOUR_FORM_ID below -->
+  <form action="https://formspree.io/f/xqawperb" method="POST">
+
+    <label>First Name</label>
+    <input type="text" name="first_name" required>
+
+    <label>Last Name</label>
+    <input type="text" name="last_name" required>
+
+    <label>Email Address</label>
+    <input type="email" name="email" required>
+
+    <label>Message</label>
+    <textarea name="message" rows="5" required></textarea>
+
+    <button type="submit">Send Message</button>
   </form>
 
-  <div id="status"></div>
-</main>
+  <p style="margin-top:20px;font-size:14px;color:gray;">
+    You will receive a confirmation email after sending.
+  </p>
+</div>
 
 <footer class="footer"></footer>
-
-<!-- SECURE EMAIL SENDER USING RESEND + VERCEL API -->
-<script>
-document.getElementById("contactForm").addEventListener("submit", async function(e){
-  e.preventDefault();
-
-  const status = document.getElementById("status");
-  status.textContent = "Sending...";
-
-  const payload = {
-    firstName: document.getElementById("firstName").value.trim(),
-    lastName: document.getElementById("lastName").value.trim(),
-    email: document.getElementById("email").value.trim(),
-    message: document.getElementById("message").value.trim()
-  };
-
-  try {
-    const res = await fetch("/api/contact", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-
-    const data = await res.json();
-
-    if (data.success) {
-      status.textContent = "Message sent successfully!";
-      document.getElementById("contactForm").reset();
-    } else {
-      status.textContent = "Email send failed.";
-    }
-  } catch (err) {
-    console.error(err);
-    status.textContent = "Error sending message.";
-  }
-});
-</script>
-
 </body>
 </html>
