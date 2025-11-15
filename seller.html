@@ -25,6 +25,11 @@ button, input[type=submit]{background:#2b6ef6;color:#fff;border:none;padding:10p
 input, textarea{width:100%;padding:8px;margin-bottom:8px;border:1px solid #cfcfd3;border-radius:4px}
 small{color:#666}
 .notice{background:#fff3cd;padding:10px;border:1px solid #ffeeba;margin-bottom:12px}
+/* Logo styling */
+.logo-img {
+  height: 39px; /* Adjust the logo size */
+  width: auto;
+  vertical-align: middle;
 </style>
 
 </head><body>
@@ -34,11 +39,6 @@ small{color:#666}
     .then(r => r.text())
     .then(d => document.getElementById("header").innerHTML = d)
     .catch(e => console.error("Header load failed:", e));
-/* Logo styling */
-.logo-img {
-  height: 39px; /* Adjust the logo size */
-  width: auto;
-  vertical-align: middle;
 </script>
 
 <div class="banner"><img src="banner.jpg" alt="Banner"></div>
