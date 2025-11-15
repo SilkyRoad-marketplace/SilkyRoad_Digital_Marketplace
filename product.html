@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="styles.css">  
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="/favicon.png">
+<title>Product – Silky Road</title>
+
+<meta name="description" content="Digital product details on Silky Road – view description, price, and customer reviews.">
+<meta name="keywords" content="digital product, download, reviews, silky road">
+
+<style>
+body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f9;color:#222}
+.header{background:#fff;border-bottom:1px solid #e4e4e8}
+.container{max-width:1100px;margin:0 auto;padding:16px}
+nav{display:flex;align-items:center;justify-content:space-between}
+nav .links a{margin-left:12px;text-decoration:none;color:#333;font-weight:600}
+nav .links button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;border-radius:6px;cursor:pointer}
+
+.banner{position:relative}
+.banner img{width:100%;height:auto;display:block}
+.banner-text{display:none !important;}
+
+.category-bar{
+  margin:20px 0;
+  background:#ffffff;
+  padding:12px;
+  border:1px solid #e6e6ea;
+  display:flex;
+  gap:20px;
+  font-weight:bold;
+  flex-wrap:wrap;
+}
+.category-bar > div{position:relative; cursor:pointer;}
+.category-bar div ul{
+  display:none;
+  position:absolute;
+  background:#fff;
+  list-style:none;
+  padding:10px;
+  margin:0;
+  border:1px solid #ccc;
+  width:220px;
+  z-index:999;
+}
+.category-bar div:hover ul{display:block;}
+.category-bar ul li{padding:6px 0;}
+.category-bar a{text-decoration:none;color:#333;font-weight:normal;}
+
+.row{display:flex;gap:16px;margin-top:16px}
+.main{flex:1}
+
+.product-grid{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+}
+.card{
+  background:#fff;
+  padding:12px;
+  border:1px solid #e6e6ea;
+  box-sizing:border-box;
+  margin-bottom:12px;
+  border-radius:8px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* Logo styling */
+.logo-img {
+  height: 39px; /* Adjust the logo size */
+  width: auto;
+  vertical-align: middle;
+}
+
+/* MOBILE */
+@media(max-width:600px){
+  .card{width:100%;}
+}
+
+.footer{background:#222;color:#fff;padding:12px;margin-top:20px;text-align:center}
+button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;border-radius:6px;cursor:pointer}
+
+/* PRODUCT-SPECIFIC */
+.flex{display:flex;gap:16px;flex-wrap:wrap}
+.product-img{max-width:320px;border-radius:8px}
+.star{cursor:pointer;font-size:24px}
+.star.selected{color:gold}
+textarea{width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;box-sizing:border-box}
+.text-muted{color:#777;font-size:13px}
+</style>
+</head>
+
+<body>
+
+<!-- Shared Header -->
+<div id="header"></div>
+<script>
+  fetch("header.html?v=1")
+    .then(r => r.text())
+    .then(d => document.getElementById("header").innerHTML = d)
+    .catch(e => console.error("Header load failed:", e));
+</script>
+
+<main class="container" style="margin-top:16px;">
+
+  <div id="productCard" class="card">
+    <p>Loading product...</p>
+  </div>
+
+  <div id="reviewsCard" class="card">
+    <h3>Customer Reviews</h3>
+    <div id="reviewsList"></div>
+    <p id="noReviewsMessage" class="text-muted"></p>
+  </div>
+
+  <div id="reviewFormCard" class="card">
+    <h3>Write a Review</h3>
+    <p id="reviewInfo" class="text-muted"></p>
+    <div id="starsContainer" style="margin-bottom:8px;"></div>
+    <textarea id="reviewText" rows="4" placeholder="Write your review..."></textarea>
+    <button id="submitReviewBtn" style="margin-top:8px;">Submit Review</button>
+    <p id="reviewMessage" class="text-muted" style="margin-top:8px;"></p>
+  </div>
+
+</main>
+
+<footer class="footer"></footer>
+
+<script type="module">
+  import { supabase } from "./js/supabase-config.js";
+
+  const productCard = document.getElementById("productCard");
+  const reviewsList = document.getElementById("reviewsList");
+  const noReviewsMessage = document.getElementById("noReviewsMessage");
+  const reviewFormCard = document.getElementById("reviewFormCard");
+  const reviewInfo = document.getElementById("reviewInfo");
+  const starsContainer = document.getElementById("starsContainer");
+  const reviewText = document.getElementById("reviewText");
+  const submitReviewBtn = document.getElementById("submitReviewBtn");
+  const reviewMessage = document.getElementById("reviewMessage");
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const productId = urlParams.get("id");
+
+  let currentUser = null;
+  let selectedRating = 0;
+  let buyerAllowedToReview = false;
+
+  async function init() {
+    if (!productId) {
+      productCard.innerHTML = "<p>Product not found.</p>";
+      reviewFormCard.style.display = "none";
+      return;
+    }
+
+    const { data: userData } = await supabase.auth.getUser();
+    currentUser = userData.user || null;
+
+    await loadProduct();
+    await loadReviews();
+
+    if (currentUser) {
+      await checkIfBuyerCanReview();
+      setupStars();
+    } else {
+      reviewInfo.textContent = "Please log in and purchase this product to leave a review.";
+      reviewFormCard.style.display = "block";
+      setupStars();
+    }
+  }
+
+  async function loadProduct() {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*, profiles(first_name, last_name)")
+      .eq("id", productId)
+      .maybeSingle();
+
+    if (error || !data) {
+      productCard.innerHTML = "<p>Product not found.</p>";
+      return;
+    }
+
+    const product = data;
+
+    productCard.innerHTML = "";
+    const wrapper = document.createElement("div");
+    wrapper.className = "flex";
+
+    const img = document.createElement("img");
+    img.src = product.thumbnail_url || "";
+    img.alt = product.title || "Product image";
+    img.className = "product-img";
+
+    const info = document.createElement("div");
+    info.style.flex = "1";
+
+    const title = document.createElement("h2");
+    title.textContent = product.title;
+
+    const price = document.createElement("p");
+    price.innerHTML = "<strong>USD " + (product.price_cents / 100).toFixed(2) + "</strong>";
+
+    const sellerName = document.createElement("p");
+    const p = product.profiles;
+    sellerName.className = "text-muted";
+    sellerName.textContent = "Seller: " + ((p && (p.first_name || p.last_name)) ? `${p.first_name || ""} ${p.last_name || ""}`.trim() : "Unknown");
+
+    const desc = document.createElement("p");
+    desc.textContent = product.description || "";
+
+    // BUY BUTTON Placeholder (PayPal integration later)
+    const buyBtn = document.createElement("button");
+    buyBtn.textContent = "Buy Now (PayPal)";
+    buyBtn.addEventListener("click", () => {
+      alert("Payment flow not wired yet. A developer must connect PayPal here.");
+    });
+
+    info.appendChild(title);
+    info.appendChild(price);
+    info.appendChild(sellerName);
+    info.appendChild(desc);
+    info.appendChild(buyBtn);
+
+    wrapper.appendChild(img);
+    wrapper.appendChild(info);
+    productCard.appendChild(wrapper);
+  }
+
+  async function loadReviews() {
+    reviewsList.innerHTML = "";
+    noReviewsMessage.textContent = "Loading reviews...";
+
+    const { data, error } = await supabase
+      .from("reviews")
+      .select("rating, review_text, created_at, profiles(first_name, last_name)")
+      .eq("product_id", productId)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      noReviewsMessage.textContent = "Error loading reviews.";
+      console.log(error);
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      noReviewsMessage.textContent = "No reviews yet.";
+      return;
+    }
+
+    noReviewsMessage.textContent = "";
+    data.forEach(r => {
+      const div = document.createElement("div");
+      div.style.borderTop = "1px solid #eee";
+      div.style.padding = "8px 0";
+
+      const name = (r.profiles && (r.profiles.first_name || r.profiles.last_name))
+        ? `${r.profiles.first_name || ""} ${r.profiles.last_name || ""}`.trim()
+        : "Buyer";
+
+      const header = document.createElement("div");
+      header.innerHTML = `<strong>${name}</strong> · ${"★".repeat(r.rating)}${"☆".repeat(5 - r.rating)}`;
+      const text = document.createElement("div");
+      text.textContent = r.review_text || "";
+
+      div.appendChild(header);
+      div.appendChild(text);
+      reviewsList.appendChild(div);
+    });
+  }
+
+  async function checkIfBuyerCanReview() {
+    if (!currentUser) {
+      buyerAllowedToReview = false;
+      reviewInfo.textContent = "Please log in and purchase this product to leave a review.";
+      return;
+    }
+
+    // Check if user has at least one order for this product
+    const { data: orders, error } = await supabase
+      .from("orders")
+      .select("id")
+      .eq("product_id", productId)
+      .eq("buyer_id", currentUser.id);
+
+    if (error) {
+      console.log(error);
+      buyerAllowedToReview = false;
+      reviewInfo.textContent = "Error checking purchase status.";
+      return;
+    }
+
+    if (!orders || orders.length === 0) {
+      buyerAllowedToReview = false;
+      reviewInfo.textContent = "Only buyers who purchased this product can leave a review.";
+      return;
+    }
+
+    // Check if user already reviewed
+    const { data: existingReview, error: revErr } = await supabase
+      .from("reviews")
+      .select("id")
+      .eq("product_id", productId)
+      .eq("user_id", currentUser.id)
+      .maybeSingle();
+
+    if (revErr) {
+      console.log(revErr);
+      buyerAllowedToReview = false;
+      reviewInfo.textContent = "Error checking existing review.";
+      return;
+    }
+
+    if (existingReview) {
+      buyerAllowedToReview = false;
+      reviewInfo.textContent = "You already reviewed this product.";
+      reviewFormCard.style.opacity = "0.6";
+      submitReviewBtn.disabled = true;
+    } else {
+      buyerAllowedToReview = true;
+      reviewInfo.textContent = "You purchased this product. You can leave a review.";
+    }
+  }
+
+  function setupStars() {
+    starsContainer.innerHTML = "";
+    for (let i = 1; i <= 5; i++) {
+      const span = document.createElement("span");
+      span.textContent = "★";
+      span.className = "star";
+      span.addEventListener("click", () => {
+        selectedRating = i;
+        updateStars();
+      });
+      starsContainer.appendChild(span);
+    }
+  }
+
+  function updateStars() {
+    const stars = starsContainer.querySelectorAll(".star");
+    stars.forEach((star, index) => {
+      if (index < selectedRating) {
+        star.classList.add("selected");
+      } else {
+        star.classList.remove("selected");
+      }
+    });
+  }
+
+  submitReviewBtn.addEventListener("click", async () => {
+    reviewMessage.textContent = "";
+
+    if (!currentUser) {
+      reviewMessage.textContent = "Please log in first.";
+      return;
+    }
+
+    if (!buyerAllowedToReview) {
+      reviewMessage.textContent = "You are not allowed to review this product.";
+      return;
+    }
+
+    if (!selectedRating) {
+      reviewMessage.textContent = "Please select a rating.";
+      return;
+    }
+
+    const text = reviewText.value.trim();
+
+    const { error } = await supabase
+      .from("reviews")
+      .insert({
+        product_id: productId,
+        user_id: currentUser.id,
+        rating: selectedRating,
+        review_text: text
+      });
+
+    if (error) {
+      reviewMessage.textContent = "Error submitting review: " + error.message;
+    } else {
+      reviewMessage.textContent = "Review submitted. Thank you!";
+      reviewText.value = "";
+      selectedRating = 0;
+      updateStars();
+      await loadReviews();
+      await checkIfBuyerCanReview();
+    }
+  });
+
+  init();
+</script>
+
+</body>
+</html>
