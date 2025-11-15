@@ -165,6 +165,69 @@ button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;border-radius
 </main>
 
 <footer class="footer"></footer>
+<script type="module">
+  import { supabase } from "./js/supabase-config.js";
+
+  const featuredGrid = document.getElementById("featuredGrid");
+  const featuredEmpty = document.getElementById("featuredEmpty");
+
+  async function loadFeatured() {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(12);
+
+    if (error) {
+      console.error(error);
+      featuredEmpty.textContent = "Error loading products.";
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      featuredEmpty.textContent = "No products available yet. Check back soon!";
+      return;
+    }
+
+    data.forEach(p => {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const img = document.createElement("img");
+      img.src = p.thumbnail_url || "placeholder.jpg";
+      img.alt = p.title || "Product";
+      img.style.width = "100%";
+      img.style.borderRadius = "6px";
+      img.style.cursor = "pointer";
+      img.addEventListener("click", () => {
+        window.location.href = "product.html?id=" + p.id;
+      });
+
+      const title = document.createElement("h4");
+      const link = document.createElement("a");
+      link.href = "product.html?id=" + p.id;
+      link.textContent = p.title || "Untitled";
+      link.style.textDecoration = "none";
+      link.style.color = "#222";
+      title.appendChild(link);
+
+      const type = document.createElement("p");
+      type.innerHTML = `<small>${p.category || ""} ${p.subcategory ? "– " + p.subcategory : ""}</small>`;
+
+      const price = document.createElement("p");
+      price.innerHTML = "<strong>USD " + (p.price || 0).toFixed(2) + "</strong>";
+
+      card.appendChild(img);
+      card.appendChild(title);
+      card.appendChild(type);
+      card.appendChild(price);
+
+      featuredGrid.appendChild(card);
+    });
+  }
+
+  loadFeatured();
+</script>
 
 </body>
 </html>
