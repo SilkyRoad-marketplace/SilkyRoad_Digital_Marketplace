@@ -97,6 +97,10 @@ button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;border-radius
 
   <div class="card">
     <h2 id="categoryTitle">Category</h2>
+
+    <!-- ⭐ NEW: SEO category description placeholder -->
+    <p id="categoryDescription" style="font-size:17px;line-height:1.5;margin-bottom:12px;"></p>
+
     <p id="categoryInfo" class="text-muted"></p>
   </div>
 
@@ -127,24 +131,82 @@ button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;border-radius
 
   const categoryTitle = document.getElementById("categoryTitle");
   const categoryInfo = document.getElementById("categoryInfo");
+  const categoryDescription = document.getElementById("categoryDescription");
   const subSection = document.getElementById("subSection");
   const subTitle = document.getElementById("subTitle");
   const subProducts = document.getElementById("subProducts");
   const subEmpty = document.getElementById("subEmpty");
-
   const otherSection = document.getElementById("otherSection");
   const otherTitle = document.getElementById("otherTitle");
   const otherProducts = document.getElementById("otherProducts");
   const otherEmpty = document.getElementById("otherEmpty");
 
+  /* ⭐ NEW: FULL SEO CATEGORY DESCRIPTION DATA */
+  const descriptions = {
+    "Educational": {
+      "_main": "Discover educational digital products to boost your learning and productivity. Explore eBooks, online courses, worksheets, and tutorials designed to help students, professionals, and lifelong learners expand their skills with instant downloadable content.",
+      "eBooks": "Browse digital eBooks covering business, personal growth, finance, marketing, lifestyle, and more — available for instant download.",
+      "Online Courses": "High-quality online courses designed by experts. Learn new skills at your own pace with downloadable lessons, guides, and resources.",
+      "Worksheets": "Printable and digital worksheets for students, teachers, and self-learners — perfect for practice, homework, and structured learning.",
+      "Tutorials": "Step-by-step digital tutorials that teach you new skills with clear guidance, downloadable materials, and easy instructions.",
+      "Digital Workbooks": "Download structured digital workbooks designed to help you learn, practice, and apply new knowledge effectively."
+    },
+
+    "Creative Assets": {
+      "_main": "Explore premium creative assets for designers, artists, and creators. Discover stock photos, videos, music, digital art, fonts, brushes, and more to level up your creative projects.",
+      "Stock Photos": "High-resolution stock photos for commercial and personal use — perfect for websites, ads, social media, and creative projects.",
+      "Videos": "Download video clips for filmmaking, content creation, marketing, and digital media projects.",
+      "Music / Audio Tracks": "Download music and audio tracks suitable for podcasts, YouTube videos, film projects, and commercial use.",
+      "Sound Effects": "Professional sound effects for filmmaking, editing, game development, and multimedia production.",
+      "Digital Art": "Unique digital artworks ready for instant download — ideal for print, decor, creative projects, and personal use.",
+      "Fonts": "Creative fonts for branding, graphic design, invitations, posters, and more — instantly downloadable.",
+      "Brushes": "Digital brushes for Procreate, Photoshop, and other design software — perfect for digital artists.",
+      "Lightroom Presets": "Download Lightroom presets to enhance photos instantly with professional color grading.",
+      "3D Models": "Ready-to-use 3D models for design, animation, rendering, and game development.",
+      "UI Kits": "Download user interface kits for apps and websites — buttons, layouts, components, and more.",
+      "Website Themes": "Digital template themes for websites, portfolios, and blogs — easy to customize and ready to use."
+    },
+
+    "Productivity": {
+      "_main": "Improve your workflow and stay organized with digital productivity tools — including planners, journals, templates, social media packs, and Notion files.",
+      "Planners": "Digital planners for daily, weekly, monthly, and yearly planning — perfect for tablets and printable use.",
+      "Journals": "Self-growth and wellness journals to help track habits, goals, reflections, and personal development.",
+      "Social Media Packs": "Ready-made templates to boost your online presence — ideal for Instagram, Facebook, TikTok, and marketing campaigns.",
+      "Business Templates": "Download professional business templates including invoices, contracts, proposals, and business plans.",
+      "Spreadsheets": "Excel and Google Sheets templates for budgeting, finance tracking, business management, and planning.",
+      "Notion Templates": "Powerful Notion templates for productivity, organization, business management, and personal growth."
+    },
+
+    "Templates": {
+      "_main": "Shop high-quality digital templates for Canva, websites, printable games, stickers, craft patterns, and more — ready to customize and use instantly.",
+      "Canva Templates": "Ready-to-edit Canva templates for social media, business, marketing, and personal branding.",
+      "Website Themes": "Customizable digital themes for websites, shops, blogs, and portfolios.",
+      "Digital Stickers": "Cute and creative digital stickers for Notability, GoodNotes, planners, and digital journaling.",
+      "Printable Games": "Instant-download printable games for parties, classrooms, events, and family fun.",
+      "Craft Patterns": "Digital craft patterns for sewing, knitting, crochet, DIY projects, and handmade creations.",
+      "Email Templates": "Professional email templates for marketing, newsletters, business outreach, and customer communication."
+    }
+  };
+
   async function loadCategory() {
     if (!category) {
       categoryTitle.textContent = "All Products";
+      categoryDescription.textContent = "";
       categoryInfo.textContent = "No category specified.";
       return;
     }
 
     categoryTitle.textContent = category;
+
+    /* ⭐ NEW: Apply SEO description based on category + sub */
+    if (sub && descriptions[category] && descriptions[category][sub]) {
+      categoryDescription.textContent = descriptions[category][sub];
+    } else if (descriptions[category] && descriptions[category]["_main"]) {
+      categoryDescription.textContent = descriptions[category]["_main"];
+    } else {
+      categoryDescription.textContent = "";
+    }
+
     categoryInfo.textContent = sub
       ? "Showing sub-category: " + sub
       : "Showing all items in this category.";
@@ -156,35 +218,24 @@ button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;border-radius
       .eq("category", category)
       .order("created_at", { ascending: false });
 
-    if (error) {
-      categoryInfo.textContent = "Error loading products.";
-      console.error(error);
-      return;
-    }
-
+    if (error) { categoryInfo.textContent = "Error loading products."; return; }
     if (!data || data.length === 0) {
       categoryInfo.textContent = "No products found in this category yet.";
       return;
     }
 
-    // Option C logic:
-    // - if sub exists: highlight those first
-    // - then show other items in same category below
     if (sub) {
       const primary = data.filter(p => (p.subcategory || "") === sub);
       const others = data.filter(p => (p.subcategory || "") !== sub);
 
-      // Sub-section
       subSection.style.display = "block";
       subTitle.textContent = "Sub-category: " + sub;
       renderProducts(primary, subProducts, subEmpty, "No products yet in this sub-category.");
 
-      // Other items
       otherSection.style.display = "block";
       otherTitle.textContent = "Other items in " + category;
       renderProducts(others, otherProducts, otherEmpty, "No other items in this category yet.");
     } else {
-      // No sub-category given: just show all in one list
       subSection.style.display = "block";
       subTitle.textContent = "All items in " + category;
       renderProducts(data, subProducts, subEmpty, "No products yet in this category.");
