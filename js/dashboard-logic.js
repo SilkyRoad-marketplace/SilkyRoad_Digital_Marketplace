@@ -297,6 +297,15 @@ async function loadProducts(user_id) {
   });
 }
 
+// Block .exe files for security
+const forbiddenExtensions = ["exe", "msi", "bat", "cmd", "scr"];
+
+const ext = file.name.split(".").pop().toLowerCase();
+if (forbiddenExtensions.includes(ext)) {
+  uploadMessage.textContent = "Executable files (.exe, .msi, .bat, .cmd, .scr) are not allowed for security reasons.";
+  return;
+}
+
 /* -----------------------------
    10. LOAD SALES SUMMARY (simple placeholder)
 --------------------------------*/
