@@ -88,7 +88,14 @@ fetch("header.html?v=1")
 
 </main>
 
+<!-- FOOTER -->
 <footer class="footer"></footer>
+<script>
+  fetch("footer.html?v=2")
+    .then(r => r.text())
+    .then(d => document.querySelector(".footer").innerHTML = d)
+    .catch(e => console.error("Footer load failed:", e));
+</script>
 
 <script type="module" src="product-logic.js"></script>
 
