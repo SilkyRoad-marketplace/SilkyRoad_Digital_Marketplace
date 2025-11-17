@@ -234,7 +234,14 @@ input, textarea{width:100%;padding:8px;margin-top:4px;border:1px solid #ccc;bord
 
 </main>
 
+<!-- FOOTER -->
 <footer class="footer"></footer>
+<script>
+  fetch("footer.html?v=2")
+    .then(r => r.text())
+    .then(d => document.querySelector(".footer").innerHTML = d)
+    .catch(e => console.error("Footer load failed:", e));
+</script>
 
 <script type="module" src="js/dashboard-logic.js"></script>
 
