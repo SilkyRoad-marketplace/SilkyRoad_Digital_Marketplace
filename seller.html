@@ -69,7 +69,14 @@ small{color:#666}
 
 </main>
 
+<!-- FOOTER -->
 <footer class="footer"></footer>
+<script>
+  fetch("footer.html?v=2")
+    .then(r => r.text())
+    .then(d => document.querySelector(".footer").innerHTML = d)
+    .catch(e => console.error("Footer load failed:", e));
+</script>
 
 </body>
 </html>
