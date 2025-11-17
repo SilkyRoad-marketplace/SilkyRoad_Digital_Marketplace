@@ -1,119 +1,165 @@
 <!doctype html>
 <html lang="en">
 <head>
+<link rel="stylesheet" href="styles.css">  
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="/favicon.png">
-<link rel="stylesheet" href="styles.css">
 <title>Terms of Use – Silky Road Digital Marketplace</title>
 
+<meta name="description" content="Read the Terms of Use for Silky Road Digital Marketplace. Learn about buyer protection, seller rules, refunds, safety, and platform policies.">
+
 <style>
-body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f9;color:#222;line-height:1.6}
-.container{max-width:900px;margin:0 auto;padding:20px}
+body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f9;color:#222}
+.container{max-width:1100px;margin:0 auto;padding:16px}
+
+.banner img{width:100%;height:auto;display:block}
+
+/* Cards */
 .card{
   background:#fff;
-  padding:20px;
+  padding:16px;
   border:1px solid #e6e6ea;
   border-radius:8px;
-  box-shadow:0 2px 6px rgba(0,0,0,0.05);
+  box-shadow:0 2px 8px rgba(0,0,0,0.05);
   margin-bottom:20px;
 }
-h2{margin-bottom:10px}
-h3{margin-top:20px}
-a{color:#2b6ef6;text-decoration:none}
+
 /* Logo styling */
 .logo-img {
   height: 39px;
   width: auto;
   vertical-align: middle;
 }
+
+/* Footer */
+.footer{background:#222;color:#fff;padding:20px;margin-top:40px;text-align:center}
 </style>
 </head>
 
 <body>
 
+<!-- HEADER (loads header.html) -->
 <div id="header"></div>
 <script>
-  fetch("header.html?v=1")
+  fetch("header.html?v=2")
     .then(r => r.text())
     .then(d => document.getElementById("header").innerHTML = d)
     .catch(e => console.error("Header load failed:", e));
 </script>
 
-
 <!-- Banner -->
 <div class="banner">
-  <img src="banner.jpg" alt="Silky Road Banner" style="width:100%;display:block;">
+  <img src="banner.jpg" alt="Silky Road Banner">
 </div>
 
 <main class="container">
-<div class="card">
 
-<h2>Terms of Use</h2>
-<p>Last updated: 2025</p>
+  <h1>Terms of Use</h1>
 
-<p>
-Welcome to <strong>Silky Road</strong>, a digital marketplace that allows creators to sell digital downloadable products directly to customers.
-By accessing or using this website, you agree to the following Terms of Use.
-</p>
+  <div class="card">
+    <h2>1. Overview</h2>
+    <p>
+      By accessing or using <strong>Silky Road Digital Marketplace</strong>, you agree to the Terms of Use described on this page.
+      These terms apply to all buyers, sellers, and visitors using the platform.
+    </p>
+  </div>
 
-<hr>
+  <div class="card">
+    <h2>2. Seller Responsibilities</h2>
+    <ul>
+      <li>Sellers must own full rights or copyright to any digital product they upload.</li>
+      <li>Sellers may upload files up to 10MB or provide a secure external download link.</li>
+      <li>Sellers are fully responsible for the content of their uploaded files.</li>
+      <li>Copyright-infringing or illegal content is strictly prohibited and will be removed immediately.</li>
+      <li>If a copyright complaint is received, the file will be taken down without notice.</li>
+    </ul>
 
-<h3>1. Marketplace Overview</h3>
-<p>
-Silky Road is a platform that connects independent digital product sellers with customers.  
-We do not create the products unless stated.
-</p>
+    <p><strong>File Safety Disclaimer:</strong><br>
+      Sellers must ensure all files uploaded — including ZIP archives — are safe, virus-free, and their own original work.
+      Silky Road is not responsible for the contents inside ZIP files uploaded by sellers.
+      Buyers are advised to use antivirus software to scan ZIP files before opening.
+    </p>
+  </div>
 
-<h3>2. Seller Responsibilities</h3>
-<ul>
-  <li>Sellers must own full copyrights for all files they upload.</li>
-  <li>All uploads must be safe, virus-free, and original.</li>
-  <li>Executable or software files are strictly prohibited.</li>
-  <li>ZIP uploads are allowed but must follow all rules.</li>
-</ul>
+  <div class="card">
+    <h2>3. Buyer Protection Policy</h2>
+    <p>Buyers may request a refund within <strong>3 days</strong> if:</p>
+    <ul>
+      <li>The download link does not work</li>
+      <li>The file cannot be opened (corrupted ZIP, missing content)</li>
+      <li>The product received does not match the description</li>
+      <li>The download file is fake or not the correct file</li>
+    </ul>
 
-<h3>3. Buyer Responsibilities</h3>
-<ul>
-  <li>Buy from trusted sellers.</li>
-  <li>Scan ZIP files with antivirus before opening.</li>
-  <li>Understand Silky Road does not scan inside ZIP archives.</li>
-</ul>
+    <p><strong>Refund conditions:</strong></p>
+    <ul>
+      <li>Buyers must provide a screenshot or proof of the issue.</li>
+      <li>Refund requests must be submitted within 3 days of purchase.</li>
+      <li>After 3 days, refunds are no longer available.</li>
+      <li>Refunds are NOT accepted for “change of mind” or “don’t like the product”.</li>
+    </ul>
+  </div>
 
-<h3>4. Digital Product Safety Disclaimer</h3>
-<ul>
-  <li>Silky Road is not responsible for file contents inside ZIP archives.</li>
-  <li>Sellers are fully responsible for what they upload.</li>
-  <li>Buyers must verify file safety using antivirus tools.</li>
-</ul>
+  <div class="card">
+    <h2>4. No Responsibility Disclaimer</h2>
+    <p>
+      Silky Road is a digital marketplace platform and is not responsible for:
+    </p>
+    <ul>
+      <li>Any damages caused by downloaded files</li>
+      <li>Viruses, corrupted files, or harmful content uploaded by sellers</li>
+      <li>Loss of data, device issues, or software problems caused by downloads</li>
+    </ul>
+    <p>
+      Buyers download products at their own risk.  
+      Sellers are fully responsible for the safety, originality, and legality of their digital files.
+    </p>
+  </div>
 
-<h3>5. Refund Policy</h3>
-<p>Refunds are only accepted within <strong>3 days</strong> when:</p>
-<ul>
-  <li>The file cannot be downloaded.</li>
-  <li>The file is corrupted or inaccessible.</li>
-  <li>The file is not as described.</li>
-</ul>
-<p>Refunds will not be accepted for preference changes or “I don’t like it”.</p>
+  <div class="card">
+    <h2>5. Payments & Fees</h2>
+    <ul>
+      <li>Silky Road charges a 15% commission per sale.</li>
+      <li>Seller earnings are released to PayPal after a 3-day holding period.</li>
+      <li>All sales are processed through PayPal for buyer and seller protection.</li>
+    </ul>
+  </div>
 
-<h3>6. Prohibited Content</h3>
-<ul>
-  <li>Software or executable files</li>
-  <li>Malicious files</li>
-  <li>Pirated content</li>
-  <li>Adult or illegal content</li>
-</ul>
+  <div class="card">
+    <h2>6. Expiring Download Links</h2>
+    <p>
+      All purchased downloads are delivered via secure links that automatically expire after <strong>3 days</strong>.
+      This prevents unauthorized sharing and protects digital content.
+    </p>
+  </div>
 
-<h3>7. Limitation of Liability</h3>
-<p>Silky Road is not responsible for damages, data loss, or issues caused by downloads.</p>
+  <div class="card">
+    <h2>7. Reviews & Ratings</h2>
+    <p>
+      Only verified buyers may submit product reviews and ratings.
+      Fake reviews, spam, or abusive content will be removed.
+    </p>
+  </div>
 
-<h3>8. Contact</h3>
-<p>For support or disputes, visit the <a href="contact.html">Contact Us</a> page.</p>
+  <div class="card">
+    <h2>8. Contact</h2>
+    <p>
+      For support, disputes, or copyright issues, please contact us using the form on our  
+      <a href="contact.html">Contact Us</a> page.
+    </p>
+  </div>
 
-</div>
 </main>
 
+<!-- FOOTER -->
 <footer class="footer"></footer>
+<script>
+  fetch("footer.html?v=2")
+    .then(r => r.text())
+    .then(d => document.querySelector(".footer").innerHTML = d)
+    .catch(e => console.error("Footer load failed:", e));
+</script>
 
 </body>
 </html>
