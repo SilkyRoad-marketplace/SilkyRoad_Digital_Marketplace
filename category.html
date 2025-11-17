@@ -14,21 +14,14 @@
 body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f9;color:#222}
 .header{background:#fff;border-bottom:1px solid #e4e4e8}
 .container{max-width:1100px;margin:0 auto;padding:16px}
-nav{display:flex;align-items:center;justify-content:space-between}
-nav .links a{margin-left:12px;text-decoration:none;color:#333;font-weight:600}
-nav .links button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;border-radius:6px;cursor:pointer}
-
-.banner{position:relative}
 .banner img{width:100%;height:auto;display:block}
-.banner-text{display:none !important;}
 
 .card{
   background:#fff;
   padding:12px;
   border:1px solid #e6e6ea;
-  box-sizing:border-box;
-  margin-bottom:12px;
   border-radius:8px;
+  margin-bottom:12px;
   box-shadow:0 2px 6px rgba(0,0,0,0.05);
 }
 
@@ -43,15 +36,7 @@ nav .links button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;bo
 }
 .card.product-card img{
   width:100%;
-  height:auto;
   border-radius:6px;
-}
-.card.product-card h4{
-  margin:8px 0 4px;
-  font-size:16px;
-}
-.card.product-card p{
-  margin:2px 0;
 }
 
 @media(max-width:600px){
@@ -59,28 +44,25 @@ nav .links button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;bo
 }
 
 .logo-img { height: 39px; width: auto; vertical-align: middle; }
-
 .footer{background:#222;color:#fff;padding:12px;margin-top:20px;text-align:center}
-button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;border-radius:6px;cursor:pointer}
 .text-muted{color:#777;font-size:13px}
 </style>
 </head>
 
 <body>
 
+<!-- HEADER -->
 <div id="header"></div>
 <script>
-  fetch("header.html?v=1")
+  fetch("header.html?v=3")
     .then(r => r.text())
     .then(d => document.getElementById("header").innerHTML = d)
     .catch(e => console.error("Header load failed:", e));
 </script>
 
+<!-- BANNER -->
 <div class="banner">
-  <img src="banner.jpg" alt="Silky Road Banner">
-  <div class="banner-text">
-    <h1>Discover & Download Digital Products Instantly</h1>
-  </div>
+  <img src="banner.jpg" alt="Digital Marketplace Banner">
 </div>
 
 <main class="container" style="margin-top:16px;">
@@ -88,13 +70,14 @@ button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;border-radius
   <div class="card">
     <h2 id="categoryTitle">Category</h2>
 
-    <!-- SEO DESCRIPTION -->
-    <p id="categoryDescription" style="font-size:17px;line-height:1.5;margin-bottom:12px;"></p>
+    <!-- SEO CATEGORY DESCRIPTION -->
+    <p id="categoryDescription"
+       style="font-size:17px;line-height:1.5;margin-bottom:12px;"></p>
 
     <p id="categoryInfo" class="text-muted"></p>
   </div>
 
-  <!-- Sub-category highlighted -->
+  <!-- Sub-category -->
   <div id="subSection" class="card" style="display:none;">
     <h3 id="subTitle"></h3>
     <div id="subProducts" class="product-grid"></div>
@@ -113,57 +96,59 @@ button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;border-radius
 <!-- FOOTER -->
 <footer class="footer"></footer>
 <script>
-  fetch("footer.html?v=2")
+  fetch("footer.html?v=3")
     .then(r => r.text())
     .then(d => document.querySelector(".footer").innerHTML = d)
     .catch(e => console.error("Footer load failed:", e));
 </script>
 
+<!-- CATEGORY LOGIC -->
 <script type="module">
 import { supabase } from "./js/supabase-config.js";
 
 const params = new URLSearchParams(window.location.search);
 const category = params.get("category");
-const sub = params.get("sub"); // string from URL
+const sub = params.get("sub"); 
 
 const categoryTitle = document.getElementById("categoryTitle");
-const categoryInfo = document.getElementById("categoryInfo");
 const categoryDescription = document.getElementById("categoryDescription");
+const categoryInfo = document.getElementById("categoryInfo");
+
 const subSection = document.getElementById("subSection");
 const subTitle = document.getElementById("subTitle");
 const subProducts = document.getElementById("subProducts");
 const subEmpty = document.getElementById("subEmpty");
+
 const otherSection = document.getElementById("otherSection");
 const otherTitle = document.getElementById("otherTitle");
 const otherProducts = document.getElementById("otherProducts");
 const otherEmpty = document.getElementById("otherEmpty");
 
-/* SEO DESCRIPTION OBJECT (same as before) */
+/* ⭐ WORKING SAFE SEO DESCRIPTION SYSTEM */
 const categoryDescriptions = {
-  "Educational": "Explore ebooks, online courses, worksheets, tutorials, and digital workbooks created by independent educators.",
-  
-  "Creative Assets": "High-resolution stock photos, videos, music tracks, sound effects, digital art, fonts, brushes, Lightroom presets, and more creative tools.",
-  
-  "Productivity": "Boost your productivity with digital planners, journals, business templates, spreadsheets, social media packs, and Notion templates.",
-  
-  "Templates": "Browse editable Canva templates, printable games, craft patterns, email templates, website themes and digital sticker packs."
+  "Educational":
+    "Explore ebooks, online courses, worksheets, tutorials, and digital workbooks created by independent educators.",
+
+  "Creative Assets":
+    "High-resolution stock photos, videos, music tracks, sound effects, digital art, fonts, brushes, Lightroom presets, and more creative tools.",
+
+  "Productivity":
+    "Boost your productivity with digital planners, journals, business templates, spreadsheets, social media packs, and Notion templates.",
+
+  "Templates":
+    "Browse editable Canva templates, printable games, craft patterns, email templates, website themes, and digital sticker packs."
 };
 
-
 async function loadCategory() {
-  if (!category) {
-    categoryTitle.textContent = "All Products";
-    return;
+
+  categoryTitle.textContent = category || "All Products";
+
+  // ⭐ FIXED — show full SEO description
+  if (categoryDescriptions[category]) {
+    categoryDescription.textContent = categoryDescriptions[category];
   }
 
-  categoryTitle.textContent = category;
-
-  // ⭐ FIX: Match URL sub with SEO descriptions
-  if (sub && descriptions[category] && descriptions[category][sub]) {
-    categoryDescription.textContent = descriptions[category][sub];
-  } else if (descriptions[category] && descriptions[category]["_main"]) {
-    categoryDescription.textContent = descriptions[category]["_main"];
-  }
+  if (!category) return;
 
   const { data, error } = await supabase
     .from("products")
@@ -173,8 +158,8 @@ async function loadCategory() {
 
   if (error) { console.error(error); return; }
 
+  // Sub-category logic (uses your DB column sub_category)
   if (sub) {
-    // ⭐ FIX: Use your DB column name sub_category
     const primary = data.filter(p => (p.sub_category || "") === sub);
     const others = data.filter(p => (p.sub_category || "") !== sub);
 
@@ -214,8 +199,8 @@ function renderProducts(items, container, emptyLabel) {
     const link = document.createElement("a");
     link.textContent = p.title || "Untitled";
     link.href = "product.html?id=" + p.id;
-    link.style.color = "#222";
     link.style.textDecoration = "none";
+    link.style.color = "#222";
     title.appendChild(link);
 
     const price = document.createElement("p");
