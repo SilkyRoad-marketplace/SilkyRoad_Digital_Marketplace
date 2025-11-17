@@ -32,7 +32,6 @@ a{color:#2b6ef6;text-decoration:none}
 
 <body>
 
-<!-- Shared Header -->
 <div id="header"></div>
 <script>
   fetch("header.html?v=1")
@@ -40,6 +39,7 @@ a{color:#2b6ef6;text-decoration:none}
     .then(d => document.getElementById("header").innerHTML = d)
     .catch(e => console.error("Header load failed:", e));
 </script>
+
 
 <!-- Banner -->
 <div class="banner">
