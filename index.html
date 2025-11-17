@@ -188,7 +188,14 @@ Creators can join Silky Road for free and start selling immediately without any 
 
 </main>
 
+<!-- FOOTER -->
 <footer class="footer"></footer>
+<script>
+  fetch("footer.html?v=2")
+    .then(r => r.text())
+    .then(d => document.querySelector(".footer").innerHTML = d)
+    .catch(e => console.error("Footer load failed:", e));
+</script>
 
 <script type="module">
   import { supabase } from "./js/supabase-config.js";
