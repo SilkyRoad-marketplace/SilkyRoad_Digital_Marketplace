@@ -139,51 +139,16 @@ const otherProducts = document.getElementById("otherProducts");
 const otherEmpty = document.getElementById("otherEmpty");
 
 /* SEO DESCRIPTION OBJECT (same as before) */
-const descriptions = {  
-  "Educational": {
-    "_main": "Discover educational digital products...",
-    "eBooks": "Browse digital eBooks...",
-    "Online Courses": "High-quality online courses...",
-    "Worksheets": "Printable and digital worksheets...",
-    "Tutorials": "Step-by-step digital tutorials...",
-    "Digital Workbooks": "Structured workbooks to learn..."
-  },
-
-  "Creative Assets": {
-    "_main": "Explore premium creative assets...",
-    "Stock Photos": "High-resolution stock photos...",
-    "Videos": "Download video clips...",
-    "Music / Audio Tracks": "Download music tracks...",
-    "Sound Effects": "Professional SFX library...",
-    "Digital Art": "Download unique digital artworks...",
-    "Fonts": "Creative fonts for branding...",
-    "Brushes": "Digital brushes for Procreate...",
-    "Lightroom Presets": "Instant photo enhancements...",
-    "3D Models": "Ready-to-use 3D models...",
-    "UI Kits": "UI Kits for apps and web...",
-    "Website Themes": "Website themes and templates..."
-  },
-
-  "Productivity": {
-    "_main": "Improve productivity with planners...",
-    "Planners": "Digital planners for daily use...",
-    "Journals": "Wellness and self-growth journals...",
-    "Social Media Packs": "Marketing & social media templates...",
-    "Business Templates": "Professional business documents...",
-    "Spreadsheets": "Budget & finance spreadsheets...",
-    "Notion Templates": "Powerful Notion templates..."
-  },
-
-  "Templates": {
-    "_main": "Shop high-quality templates...",
-    "Canva Templates": "Editable Canva templates...",
-    "Website Themes": "Themes for websites & blogs...",
-    "Digital Stickers": "Cute stickers for planners...",
-    "Printable Games": "Printable party and school games...",
-    "Craft Patterns": "Sewing & craft patterns...",
-    "Email Templates": "Professional email layouts..."
-  }
+const categoryDescriptions = {
+  "Educational": "Explore ebooks, online courses, worksheets, tutorials, and digital workbooks created by independent educators.",
+  
+  "Creative Assets": "High-resolution stock photos, videos, music tracks, sound effects, digital art, fonts, brushes, Lightroom presets, and more creative tools.",
+  
+  "Productivity": "Boost your productivity with digital planners, journals, business templates, spreadsheets, social media packs, and Notion templates.",
+  
+  "Templates": "Browse editable Canva templates, printable games, craft patterns, email templates, website themes and digital sticker packs."
 };
+
 
 async function loadCategory() {
   if (!category) {
