@@ -1,198 +1,203 @@
+// ===============================
 // product-logic.js
-// Loads product details + customer reviews for product.html
+// ===============================
 
-import { supabase } from "./js/supabase-config.js";
+import { supabase } from "./supabase-config.js";
 
-// Get DOM elements
-const productCard = document.getElementById("productCard");
-const reviewsList = document.getElementById("reviewsList");
-const noReviewsMessage = document.getElementById("noReviewsMessage");
+// =======================================
+// 1. GET PRODUCT ID FROM URL
+// =======================================
+const urlParams = new URLSearchParams(window.location.search);
+const productId = urlParams.get("id");
 
-// Get product ID from URL: product.html?id=xxxx
-const params = new URLSearchParams(window.location.search);
-const productId = params.get("id");
+// DOM Elements
+const productTitle = document.getElementById("product-title");
+const productImage = document.getElementById("product-image");
+const productPrice = document.getElementById("product-price");
+const productDescription = document.getElementById("product-description");
 
-// ---------- LOAD PRODUCT DETAILS ----------
+const reviewsContainer = document.getElementById("reviews-container");
+const reviewForm = document.getElementById("review-form");
+const reviewTextInput = document.getElementById("review-text");
+const starInputs = document.querySelectorAll(".review-star");
+
+// =======================================
+// 2. LOAD CURRENT USER
+// =======================================
+let currentUser = null;
+
+async function loadUser() {
+  const { data: { user } } = await supabase.auth.getUser();
+  currentUser = user;
+}
+
+await loadUser();
+
+// ======================================================
+// 3. LOAD PRODUCT INFO
+// ======================================================
 async function loadProduct() {
-  if (!productId) {
-    productCard.innerHTML = "<p>Product not found.</p>";
-    return;
-  }
-
-  // Fetch product from Supabase
-  const { data: product, error } = await supabase
+  const { data, error } = await supabase
     .from("products")
     .select("*")
     .eq("id", productId)
     .single();
 
-  if (error || !product) {
+  if (error) {
     console.error("Error loading product:", error);
-    productCard.innerHTML = "<p>Product not found or no longer available.</p>";
     return;
   }
 
-  // Try to fetch seller display name
-  let sellerName = "Seller";
-  if (product.seller_id) {
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("display_name")
-      .eq("id", product.seller_id)
-      .single();
-
-    if (!profileError && profile && profile.display_name) {
-      sellerName = profile.display_name;
-    }
-  }
-
-  // Build layout: image left, text right
-  const wrapper = document.createElement("div");
-  wrapper.className = "flex";
-
-  // LEFT COLUMN (image)
-  const leftCol = document.createElement("div");
-  const img = document.createElement("img");
-  img.className = "product-img";
-  img.alt = product.title || "Product";
-
-  // For now, use placeholder (you can later change to real thumbnail column)
-  img.src = product.thumbnail_url || "placeholder.jpg";
-
-  leftCol.appendChild(img);
-
-  // RIGHT COLUMN (details)
-  const rightCol = document.createElement("div");
-  rightCol.style.flex = "1";
-
-  // Title
-  const titleEl = document.createElement("h2");
-  titleEl.textContent = product.title || "Untitled product";
-
-  // Category / sub-category
-  const meta = document.createElement("p");
-  meta.className = "text-muted";
-  const parts = [];
-  if (product.category) parts.push(product.category);
-  if (product.sub_category) parts.push("› " + product.sub_category);
-  meta.textContent = parts.join(" ");
-
-  // Price
-  const priceEl = document.createElement("p");
-  priceEl.style.fontSize = "20px";
-  priceEl.style.fontWeight = "bold";
-
-  const rawPrice = product.price;
-  const priceNumber =
-    typeof rawPrice === "number"
-      ? rawPrice
-      : parseFloat(rawPrice || "0");
-
-  priceEl.textContent = "USD " + priceNumber.toFixed(2);
-
-  // Seller
-  const sellerEl = document.createElement("p");
-  sellerEl.className = "text-muted";
-  sellerEl.textContent = "Sold by: " + sellerName;
-
-  // Description (you don't have description column yet, so this is placeholder)
-  const descEl = document.createElement("p");
-  descEl.style.marginTop = "12px";
-  descEl.style.lineHeight = "1.6";
-  descEl.textContent =
-    product.description ||
-    "No description has been added for this product yet.";
-
-  // Buy Now button (placeholder – later we hook PayPal here)
-  const ctaBtn = document.createElement("button");
-  ctaBtn.textContent = "Buy Now with PayPal";
-  ctaBtn.style.marginTop = "16px";
-  ctaBtn.onclick = () => {
-    alert("Checkout integration will be added here later.");
-  };
-
-  // Append to right column
-  rightCol.appendChild(titleEl);
-  rightCol.appendChild(meta);
-  rightCol.appendChild(priceEl);
-  rightCol.appendChild(sellerEl);
-  rightCol.appendChild(descEl);
-  rightCol.appendChild(ctaBtn);
-
-  // Put both columns into wrapper
-  wrapper.appendChild(leftCol);
-  wrapper.appendChild(rightCol);
-
-  // Replace "Loading product..." with our layout
-  productCard.innerHTML = "";
-  productCard.appendChild(wrapper);
+  productTitle.textContent = data.title;
+  productImage.src = data.image_url;
+  productPrice.textContent = "$" + (data.price_cents / 100).toFixed(2);
+  productDescription.textContent = data.description;
 }
 
-// ---------- LOAD CUSTOMER REVIEWS ----------
-async function loadReviews() {
-  if (!productId) return;
+loadProduct();
 
-  const { data, error } = await supabase
+// ======================================================
+// 4. SHOW STAR GRAPHICS
+// ======================================================
+function renderStars(rating) {
+  let html = "";
+  for (let i = 1; i <= 5; i++) {
+    html += i <= rating
+      ? `<span class="star filled">★</span>`
+      : `<span class="star">☆</span>`;
+  }
+  return html;
+}
+
+// ======================================================
+// 5. LOAD AND DISPLAY REVIEWS
+// ======================================================
+async function loadReviews() {
+  const { data: reviews, error } = await supabase
     .from("reviews")
-    .select("*")
+    .select("rating, review_text, created_at, user_id, profiles(display_name)")
     .eq("product_id", productId)
     .order("created_at", { ascending: false });
 
   if (error) {
     console.error("Error loading reviews:", error);
-    noReviewsMessage.textContent = "Error loading reviews.";
     return;
   }
 
-  if (!data || data.length === 0) {
-    noReviewsMessage.textContent =
-      "No reviews yet. Only verified buyers can leave a review.";
-    return;
-  }
+  reviewsContainer.innerHTML = "";
 
-  noReviewsMessage.textContent = "";
-  reviewsList.innerHTML = "";
+  reviews.forEach((r) => {
+    const name = r.profiles?.display_name || "Anonymous";
 
-  data.forEach((r) => {
-    const row = document.createElement("div");
-    row.style.borderTop = "1px solid #eee";
-    row.style.padding = "10px 0";
+    const reviewHTML = `
+      <div class="review-box">
+        <div class="review-stars">${renderStars(r.rating)}</div>
+        <p class="review-text">${r.review_text}</p>
+        <p class="review-author">— ${name}</p>
+        <p class="review-date">${new Date(r.created_at).toLocaleDateString()}</p>
+      </div>
+    `;
 
-    // Stars ⭐
-    const stars = document.createElement("div");
-    const rating = r.rating || 0;
-    for (let i = 1; i <= 5; i++) {
-      const star = document.createElement("span");
-      star.textContent = i <= rating ? "★" : "☆";
-      star.style.color = i <= rating ? "#f5b50a" : "#ccc";
-      star.style.fontSize = "18px";
-      stars.appendChild(star);
-    }
-
-    // Buyer name + date
-    const header = document.createElement("p");
-    header.style.margin = "4px 0";
-    header.style.fontWeight = "bold";
-
-    const name = r.buyer_name || "Verified buyer";
-    const dateStr = r.created_at
-      ? new Date(r.created_at).toLocaleDateString()
-      : "";
-
-    header.textContent = dateStr ? `${name} · ${dateStr}` : name;
-
-    // Review text
-    const body = document.createElement("p");
-    body.style.margin = "4px 0";
-    body.textContent = r.review_text || "";
-
-    row.appendChild(stars);
-    row.appendChild(header);
-    row.appendChild(body);
-    reviewsList.appendChild(row);
+    reviewsContainer.innerHTML += reviewHTML;
   });
 }
 
-// ---------- RUN ON PAGE LOAD ----------
-loadProduct();
 loadReviews();
+
+// ======================================================
+// 6. CHECK IF USER PURCHASED PRODUCT
+// ======================================================
+async function userPurchasedProduct() {
+  if (!currentUser) return false;
+
+  const { data, error } = await supabase
+    .from("orders")
+    .select("id")
+    .eq("buyer_id", currentUser.id)
+    .eq("product_id", productId)
+    .eq("status", "paid")   // only paid orders
+    .maybeSingle();
+
+  return data ? true : false;
+}
+
+// ======================================================
+// 7. CHECK IF USER ALREADY REVIEWED
+// ======================================================
+async function userAlreadyReviewed() {
+  if (!currentUser) return false;
+
+  const { data, error } = await supabase
+    .from("reviews")
+    .select("id")
+    .eq("user_id", currentUser.id)
+    .eq("product_id", productId)
+    .maybeSingle();
+
+  return data ? true : false;
+}
+
+// ======================================================
+// 8. ENABLE OR DISABLE REVIEW FORM
+// ======================================================
+async function setupReviewForm() {
+  if (!currentUser) {
+    reviewForm.innerHTML = `<p>Please log in to leave a review.</p>`;
+    return;
+  }
+
+  const purchased = await userPurchasedProduct();
+  if (!purchased) {
+    reviewForm.innerHTML = `<p>You must purchase this product before writing a review.</p>`;
+    return;
+  }
+
+  const already = await userAlreadyReviewed();
+  if (already) {
+    reviewForm.innerHTML = `<p>You have already reviewed this product.</p>`;
+    return;
+  }
+
+  // Otherwise allow review
+  reviewForm.style.display = "block";
+}
+
+setupReviewForm();
+
+// ======================================================
+// 9. SUBMIT REVIEW
+// ======================================================
+reviewForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  let selectedRating = 0;
+  starInputs.forEach((s) => {
+    if (s.checked) selectedRating = parseInt(s.value);
+  });
+
+  if (selectedRating === 0) {
+    alert("Please select a rating.");
+    return;
+  }
+
+  const reviewText = reviewTextInput.value.trim();
+
+  const { error } = await supabase
+    .from("reviews")
+    .insert({
+      product_id: productId,
+      user_id: currentUser.id,
+      rating: selectedRating,
+      review_text: reviewText,
+    });
+
+  if (error) {
+    console.error("Error submitting review:", error);
+    alert("Error submitting review.");
+    return;
+  }
+
+  alert("Review submitted successfully!");
+  reviewForm.style.display = "none";
+  loadReviews();
+});
