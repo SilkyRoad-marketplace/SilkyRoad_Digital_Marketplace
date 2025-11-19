@@ -122,6 +122,31 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
     width:100%;
   }
 }
+/* ⭐ MOBILE 3-ROW CATEGORY BAR */
+@media(max-width:600px){
+
+  .category-bar {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns */
+    gap: 12px;
+    padding: 12px;
+  }
+
+  /* Force All to take full row (1 column) */
+  .category-bar .all-category {
+    grid-column: span 2;
+    text-align: left;
+  }
+
+  .category-bar > div {
+    width: 100%;
+  }
+
+  /* Dropdown stays normal */
+  .category-bar div ul {
+    width: 180px;
+  }
+}
 
 .logo-img { height: 39px; width: auto; vertical-align: middle; }
 .footer{background:#222;color:#fff;padding:12px;margin-top:20px;text-align:center}
@@ -148,11 +173,10 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
 <!-- STICKY CATEGORY NAVIGATION BAR -->
 <div class="category-bar-wrapper">
   <div class="category-bar">
-    <div>🏷️ All
-      <ul>
-        <li><a href="category.html?category=All">All Products</a></li>
-      </ul>
-    </div>
+    <div class="all-category">🏷️ All
+  <ul><li><a href="category.html?category=All">All Products</a></li></ul>
+</div>
+
 
     <div>📚 Educational
       <ul>
