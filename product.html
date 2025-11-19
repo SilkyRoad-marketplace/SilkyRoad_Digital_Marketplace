@@ -190,8 +190,12 @@ fetch("header.html?v=3")
     .then(d => document.querySelector(".footer").innerHTML = d)
     .catch(e => console.error("Footer load failed:", e));
 </script>
+<!-- PayPal Smart Buttons SDK (USD) -->
+<script src="https://www.paypal.com/sdk/js?client-id=AYAQJGW227ncOckTYKROx4KAz6QCJorII3-GUA-JFVHzeAyxQD_rltfYGV86hPzZ3ypAcNjE51OnrYrO&currency=USD"></script>
 
-<script type="module" src="product-logic.js"></script>
+<!-- Your product logic -->
+
+  <script type="module" src="product-logic.js"></script>
 
 </body>
 </html>
