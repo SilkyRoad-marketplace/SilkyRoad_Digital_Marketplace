@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="/favicon.png">
+
+<title>Pricing – Silky Road Seller Plans</title>
+
+<meta name="description" content="Choose the best seller plan for your digital products on Silky Road. Start free and upgrade anytime to reduce platform fees and increase upload limits.">
+<meta name="keywords" content="seller pricing, digital marketplace plans, sell digital products, platform fees, Silky Road pricing">
+
+<style>
+body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f9;color:#222}
+.header{background:#fff;border-bottom:1px solid #e6e6e8}
+.container{max-width:1100px;margin:0 auto;padding:16px}
+.banner img{width:100%;height:auto;display:block}
+.banner-text{display:none!important;}
+
+.plan-section{margin-top:25px;text-align:center}
+.plan-section h1{font-size:28px;margin-bottom:10px}
+.plan-section p{max-width:850px;margin:0 auto 25px;font-size:18px;line-height:1.6}
+
+.pricing-grid{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+  justify-content:center;
+  margin-top:20px;
+}
+
+.price-box{
+  background:#fff;
+  padding:20px;
+  width:300px;
+  border:1px solid #dcdce0;
+  border-radius:12px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.06);
+  text-align:center;
+}
+
+.price-box h2{margin:0;font-size:24px}
+.price-box .amount{font-size:32px;margin:10px 0;font-weight:bold}
+.price-box ul{list-style:none;padding:0;margin:15px 0;text-align:left;font-size:16px;line-height:1.6}
+.price-box ul li::before{content:"✔ ";color:#2b6ef6;font-weight:bold}
+
+button{
+  background:#2b6ef6;
+  color:#fff;
+  padding:12px 20px;
+  border:none;
+  border-radius:6px;
+  font-size:16px;
+  cursor:pointer;
+  width:100%;
+}
+
+/* Logo styling */
+.logo-img{height:39px;width:auto;vertical-align:middle}
+
+.footer{background:#222;color:#fff;padding:12px;margin-top:30px;text-align:center}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div id="header"></div>
+<script>
+  fetch("header.html?v=1")
+    .then(r=>r.text())
+    .then(d=>document.getElementById("header").innerHTML=d);
+</script>
+
+<!-- BANNER -->
+<div class="banner">
+  <img src="banner.jpg" alt="Silky Road Banner">
+</div>
+
+<main class="container">
+
+  <section class="plan-section">
+    <h1>Choose the Right Plan for Your Digital Store</h1>
+    <p>
+      <strong>Try it out for free — you have nothing to lose.</strong><br>
+      You only pay when you get sales.  
+      When your sales start to grow, you can upgrade your plan to lower your platform fees, save more in the long run, and increase your per-upload size limit.
+    </p>
+
+    <h2>Seller Plans & Pricing</h2>
+    <p style="font-size:17px;max-width:900px;margin:0 auto;">
+      All plans include secure PayPal checkout, instant digital delivery with 3-day expiring links, and access to the Silky Road seller dashboard.  
+      <strong>Platform fees are charged on net sales after deduction of PayPal’s base transaction fees.</strong>
+    </p>
+  </section>
+
+  <!-- PRICING BOXES -->
+  <div class="pricing-grid">
+
+    <!-- FREE PLAN -->
+    <div class="price-box">
+      <h2>Free Plan</h2>
+      <div class="amount">$0 <span style="font-size:16px;">/mo</span></div>
+      <ul>
+        <li>Access to all features</li>
+        <li>Unlimited products</li>
+        <li>Unlimited revenue</li>
+        <li>Upload file size: 10MB limit/upload</li>
+        <li>Seller payout: ~85% (after PayPal fees)</li>
+      </ul>
+      <a href="dashboard.html"><button>Sign Up for Free</button></a>
+    </div>
+
+    <!-- PLUS PLAN -->
+    <div class="price-box">
+      <h2>Plus Plan</h2>
+      <div class="amount">$25 <span style="font-size:16px;">/mo</span></div>
+      <ul>
+        <li>Access to all features</li>
+        <li>Unlimited products</li>
+        <li>Unlimited revenue</li>
+        <li>Upload file size: 25MB limit/upload</li>
+        <li>Seller payout: ~94% (after PayPal fees)</li>
+      </ul>
+      <a href="https://your-paypal-plus-link"><button>Sign Up for Plus Plan</button></a>
+    </div>
+
+    <!-- PRO PLAN -->
+    <div class="price-box">
+      <h2>Pro Plan</h2>
+      <div class="amount">$75 <span style="font-size:16px;">/mo</span></div>
+      <ul>
+        <li>Access to all features</li>
+        <li>Unlimited products</li>
+        <li>Unlimited revenue</li>
+        <li>Upload file size: 50MB MAX/upload</li>
+        <li>Seller payout: ~98% (after PayPal fees)</li>
+      </ul>
+      <a href="https://your-paypal-pro-link"><button>Sign Up for Pro Plan</button></a>
+    </div>
+
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer"></footer>
+<script>
+  fetch("footer.html?v=3")
+    .then(r=>r.text())
+    .then(d=>document.querySelector(".footer").innerHTML=d);
+</script>
+
+</body>
+</html>
