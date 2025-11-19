@@ -16,42 +16,76 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
 .container{max-width:1100px;margin:0 auto;padding:16px}
 .banner img{width:100%;height:auto;display:block}
 
-/* ⭐ RESTORED CATEGORY BAR STYLES (same as index.html) */
+/* Sticky wrapper for category bar */
+.category-bar-wrapper{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background:#f7f7f9;
+}
+
+/* CATEGORY NAVIGATION BAR (centered, improved) */
 .category-bar{
-  margin:20px 0;
+  max-width:1100px;
+  margin:20px auto;
   background:#ffffff;
-  padding:12px;
+  padding:12px 16px;
   border:1px solid #e6e6ea;
   display:flex;
-  gap:20px;
+  gap:24px;
   font-weight:bold;
   flex-wrap:wrap;
+  border-radius:8px;
 }
+
+/* Main parent category item */
 .category-bar > div{
   position:relative;
   cursor:pointer;
+  padding:6px 0;
 }
+
+/* Dropdown menu */
 .category-bar div ul{
   display:none;
   position:absolute;
   background:#fff;
   list-style:none;
-  padding:10px;
+  padding:10px 14px;
   margin:0;
   border:1px solid #ccc;
   width:220px;
   z-index:999;
+  border-radius:6px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
 }
+
+/* Show dropdown on hover */
 .category-bar div:hover ul{
   display:block;
 }
+
+/* Sub items */
 .category-bar ul li{
   padding:6px 0;
 }
+
+/* Links */
 .category-bar a{
   text-decoration:none;
   color:#333;
   font-weight:normal;
+  transition:color 0.2s ease;
+}
+
+/* Hover link effect */
+.category-bar a:hover{
+  color:#2b6ef6;
+}
+
+/* Parent category hover color */
+.category-bar > div:hover{
+  color:#2b6ef6;
 }
 
 /* Product card layout */
@@ -79,6 +113,14 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
 
 @media(max-width:600px){
   .card.product-card{width:calc(50% - 6px);}
+  .category-bar{
+    flex-direction:column;
+    gap:12px;
+    padding:16px;
+  }
+  .category-bar > div{
+    width:100%;
+  }
 }
 
 .logo-img { height: 39px; width: auto; vertical-align: middle; }
@@ -103,11 +145,16 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
   <img src="banner.jpg" alt="Digital Marketplace Banner">
 </div>
 
-<!-- ⭐ CATEGORY NAVIGATION BAR (CENTERED LIKE HOMEPAGE) -->
-<div class="container">
+<!-- STICKY CATEGORY NAVIGATION BAR -->
+<div class="category-bar-wrapper">
   <div class="category-bar">
-    
-    <div>Educational
+    <div>🏷️ All
+      <ul>
+        <li><a href="category.html?category=All">All Products</a></li>
+      </ul>
+    </div>
+
+    <div>📚 Educational
       <ul>
         <li><a href="category.html?category=Educational&sub=eBooks">eBooks</a></li>
         <li><a href="category.html?category=Educational&sub=Online Courses">Online Courses</a></li>
@@ -117,7 +164,7 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
       </ul>
     </div>
 
-    <div>Creative Assets
+    <div>🎨 Creative Assets
       <ul>
         <li><a href="category.html?category=Creative Assets&sub=Stock Photos">Stock Photos</a></li>
         <li><a href="category.html?category=Creative Assets&sub=Videos">Videos</a></li>
@@ -130,7 +177,7 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
       </ul>
     </div>
 
-    <div>Productivity
+    <div>📈 Productivity
       <ul>
         <li><a href="category.html?category=Productivity&sub=Planners">Planners</a></li>
         <li><a href="category.html?category=Productivity&sub=Journals">Journals</a></li>
@@ -141,7 +188,7 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
       </ul>
     </div>
 
-    <div>Templates
+    <div>📁 Templates
       <ul>
         <li><a href="category.html?category=Templates&sub=Canva Templates">Canva Templates</a></li>
         <li><a href="category.html?category=Templates&sub=Digital Stickers">Digital Stickers</a></li>
@@ -150,11 +197,8 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
         <li><a href="category.html?category=Templates&sub=Email Templates">Email Templates</a></li>
       </ul>
     </div>
-
   </div>
 </div>
-
-
 
 <main class="container" style="margin-top:16px;">
 
@@ -213,36 +257,73 @@ const otherProducts = document.getElementById("otherProducts");
 const otherEmpty = document.getElementById("otherEmpty");
 
 const categoryDescriptions = {
+  "All":
+    "Browse all digital products available on Silky Road, including ebooks, templates, creative assets, productivity tools, and more.",
   "Educational":
     "Explore ebooks, online courses, worksheets, tutorials, and digital workbooks created by independent educators.",
-
   "Creative Assets":
     "High-resolution stock photos, videos, music tracks, sound effects, digital art, fonts, brushes, Lightroom presets, and more.",
-
   "Productivity":
     "Boost your productivity with planners, journals, business templates, spreadsheets, social media packs, and Notion templates.",
-
   "Templates":
     "Editable Canva templates, printable games, craft patterns, email templates, and digital sticker packs."
 };
 
 async function loadCategory() {
-  categoryTitle.textContent = category || "All Products";
+  const cat = category || "All";
 
-  if (categoryDescriptions[category]) {
-    categoryDescription.textContent = categoryDescriptions[category];
+  // Title
+  categoryTitle.textContent = (cat === "All") ? "All Products" : cat;
+
+  // SEO description
+  if (categoryDescriptions[cat]) {
+    categoryDescription.textContent = categoryDescriptions[cat];
+  } else {
+    categoryDescription.textContent = "";
   }
 
-  if (!category) return;
+  // Info text
+  if (cat === "All") {
+    categoryInfo.textContent = "Showing all products across all categories.";
+  } else if (sub) {
+    categoryInfo.textContent = "Showing sub-category: " + sub;
+  } else {
+    categoryInfo.textContent = "Showing all items in this category.";
+  }
 
-  const { data, error } = await supabase
+  // Build Supabase query
+  let query = supabase
     .from("products")
     .select("*")
-    .eq("category", category)
     .order("created_at", { ascending: false });
 
-  if (error) { console.error(error); return; }
+  if (cat !== "All") {
+    query = query.eq("category", cat);
+  }
 
+  const { data, error } = await query;
+
+  if (error) {
+    console.error(error);
+    categoryInfo.textContent = "Error loading products.";
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    categoryInfo.textContent = "No products found yet.";
+    return;
+  }
+
+  // If All → just show all items, ignore sub
+  if (cat === "All") {
+    subSection.style.display = "block";
+    subTitle.textContent = "All items";
+    renderProducts(data, subProducts, subEmpty);
+    otherSection.style.display = "none";
+    return;
+  }
+
+  // If category has sub
   if (sub) {
     const primary = data.filter(p => (p.sub_category || "") === sub);
     const others = data.filter(p => (p.sub_category || "") !== sub);
@@ -252,13 +333,14 @@ async function loadCategory() {
     renderProducts(primary, subProducts, subEmpty);
 
     otherSection.style.display = "block";
-    otherTitle.textContent = "Other items in " + category;
+    otherTitle.textContent = "Other items in " + cat;
     renderProducts(others, otherProducts, otherEmpty);
-
   } else {
+    // No subcategory: show all for this category
     subSection.style.display = "block";
-    subTitle.textContent = "All items in " + category;
+    subTitle.textContent = "All items in " + cat;
     renderProducts(data, subProducts, subEmpty);
+    otherSection.style.display = "none";
   }
 }
 
@@ -276,6 +358,7 @@ function renderProducts(items, container, emptyLabel) {
 
     const img = document.createElement("img");
     img.src = p.thumbnail_url || "placeholder.jpg";
+    img.alt = p.title || "Product";
     img.style.cursor = "pointer";
     img.onclick = () => (window.location.href = "product.html?id=" + p.id);
 
