@@ -14,29 +14,7 @@
 body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f9;color:#222}
 .container{max-width:1100px;margin:0 auto;padding:16px}
 
-.banner{position:relative}
 .banner img{width:100%;height:auto;display:block}
-.banner-text{
-  position:absolute;
-  bottom:20px;
-  left:20px;
-  background:rgba(0,0,0,0.55);
-  color:#fff;
-  padding:16px 22px;
-  border-radius:6px;
-  max-width:420px;
-}
-.banner-text h1{
-  margin:0;
-  font-size:22px;
-  line-height:1.3;
-  font-weight:bold;
-}
-.banner-text p{
-  margin:6px 0 0;
-  font-size:15px;
-  line-height:1.4;
-}
 
 /* Pricing layout */
 .pricing-grid{
@@ -64,69 +42,38 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
   align-items:center;
   margin-bottom:8px;
 }
-.plan-name{
-  font-size:20px;
-  font-weight:bold;
-}
-.plan-price{
-  font-size:22px;
-  font-weight:bold;
-}
+.plan-name{font-size:20px;font-weight:bold;}
+.plan-price{font-size:22px;font-weight:bold;}
 .plan-tag{
-  font-size:12px;
-  color:#fff;
-  background:#2b6ef6;
-  padding:3px 8px;
-  border-radius:999px;
+  font-size:12px;color:#fff;background:#2b6ef6;
+  padding:3px 8px;border-radius:999px;
 }
-.plan-body p{
-  margin:6px 0;
-}
-.plan-fees{
-  font-size:14px;
-  color:#555;
-  margin:10px 0;
-}
+.plan-body p{margin:6px 0;}
+.plan-fees{font-size:14px;color:#555;margin:10px 0;}
 .plan-fees strong{color:#222;}
 .plan-features{
-  list-style:none;
-  padding-left:0;
-  margin:10px 0 16px;
+  list-style:none;padding-left:0;margin:10px 0 16px;
   font-size:14px;
 }
 .plan-features li{
   margin:4px 0;
 }
 .plan-features li::before{
-  content:"✔ ";
-  color:green;
-  font-weight:bold;
+  content:"✔ ";color:green;font-weight:bold;
 }
 .plan-button{
-  width:100%;
-  background:#2b6ef6;
-  color:#fff;
-  border:none;
-  padding:10px 14px;
-  border-radius:6px;
-  cursor:pointer;
+  width:100%;background:#2b6ef6;color:#fff;border:none;
+  padding:10px 14px;border-radius:6px;cursor:pointer;
   font-size:15px;
 }
-.plan-button.secondary{
-  background:#6c757d;
-}
-.plan-note{
-  font-size:12px;
-  color:#777;
-  margin-top:8px;
-}
+.plan-button.secondary{background:#6c757d;}
+.plan-note{font-size:12px;color:#777;margin-top:8px;}
 
 /* Logo styling */
-.logo-img { height:39px; width:auto; vertical-align:middle; }
+.logo-img{height:39px;width:auto;vertical-align:middle;}
 
 .footer{background:#222;color:#fff;padding:12px;margin-top:20px;text-align:center}
 
-/* MOBILE */
 @media(max-width:800px){
   .pricing-grid{flex-direction:column;}
 }
@@ -138,117 +85,128 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
 <!-- Shared Header -->
 <div id="header"></div>
 <script>
-  fetch("header.html?v=3")
-    .then(r => r.text())
-    .then(d => document.getElementById("header").innerHTML = d)
-    .catch(e => console.error("Header load failed:", e));
+  fetch("header.html?v=4")
+    .then(r=>r.text())
+    .then(d=>document.getElementById("header").innerHTML=d)
+    .catch(e=>console.error("Header load failed:", e));
 </script>
 
-<!-- Banner -->
-<div class="banner" style="position:relative;">
+<!-- Banner Image ONLY -->
+<div class="banner">
   <img src="banner.jpg" alt="Pricing Plans – Silky Road">
-  <div class="banner-text">
-    <h1>Choose the Right Plan for Your Digital Store</h1>
-    <p>Start free and upgrade as your sales grow. No setup fees, cancel anytime.</p>
-  </div>
 </div>
 
+<!-- NEW INTRO SECTION BELOW BANNER -->
 <main class="container">
-  <h2 style="margin-top:20px;">Seller Plans & Pricing</h2>
+
+  <h2 style="margin-top:20px;">Choose the Right Plan for Your Digital Store</h2>
   <p style="font-size:16px;line-height:1.6;">
-    All plans include secure PayPal checkout, instant digital delivery with 3-day expiring links, and access to the Silky Road seller dashboard.
-    Platform fees are charged on each completed sale in addition to PayPal’s own transaction fees.
+    Try it out for free — you have nothing to lose. You only pay when you get sales.
+    When your sales start to grow, you can upgrade your plan to lower your platform fees,
+    save more in the long run, and increase your upload size limit.
+  </p>
+
+  <h2 style="margin-top:25px;">Seller Plans & Pricing</h2>
+  <p style="font-size:16px;line-height:1.6;">
+    All plans include secure PayPal checkout, instant digital delivery with
+    <strong>3-day expiring links</strong>, and access to the Silky Road seller dashboard.
+    Percentage of platform fees are charged on <strong>net sales after deduction of PayPal’s own base transaction fees</strong>.
   </p>
 
   <div class="pricing-grid">
 
-    <!-- Free Plan -->
+    <!-- FREE PLAN -->
     <div class="plan-card">
       <div class="plan-header">
         <div class="plan-name">Try for Free</div>
-        <div class="plan-price">$0<span style="font-size:14px;font-weight:normal;"> / mo</span></div>
+        <div class="plan-price">$0 <span style="font-size:14px;font-weight:normal;">/ mo</span></div>
       </div>
       <div class="plan-body">
-        <p>Best for new creators testing their first digital products.</p>
+        <p>Perfect for new creators testing digital products.</p>
+
         <div class="plan-fees">
           <strong>Transaction fee:</strong><br>
           PayPal base fee: ~3.9% + fixed fee ~USD $0.30<br>
-          Platform fee: <strong>15%</strong> per sale<br>
-          Seller payout: <strong>~85%</strong> of product price (before PayPal fees).
+          Platform fee: <strong>15%</strong><br>
+          Seller payout: <strong>~85% (after PayPal fees)</strong>
         </div>
+
         <ul class="plan-features">
-          <li>All core marketplace features</li>
+          <li>Access to all features</li>
           <li>Unlimited products</li>
           <li>Unlimited revenue</li>
           <li>Upload file size: <strong>10MB max</strong></li>
         </ul>
+
         <a href="dashboard.html">
           <button class="plan-button">Sign up for Free</button>
         </a>
-        <p class="plan-note">
-          Free plan sellers can upgrade to Plus or Pro anytime from the dashboard.
-        </p>
+        <p class="plan-note">Upgrade to Plus or Pro anytime.</p>
       </div>
     </div>
 
-    <!-- Plus Plan -->
+    <!-- PLUS PLAN -->
     <div class="plan-card popular">
       <div class="plan-header">
         <div class="plan-name">Plus Plan</div>
-        <div class="plan-price">$25<span style="font-size:14px;font-weight:normal;"> / mo</span></div>
+        <div class="plan-price">$25 <span style="font-size:14px;font-weight:normal;">/ mo</span></div>
         <span class="plan-tag">Most Popular</span>
       </div>
       <div class="plan-body">
-        <p>Ideal for growing creators who want lower platform fees and higher upload limit.</p>
+        <p>Lower platform fees and higher upload limits.</p>
+
         <div class="plan-fees">
           <strong>Transaction fee:</strong><br>
           PayPal base fee: ~3.9% + fixed fee ~USD $0.30<br>
-          Platform fee: <strong>6%</strong> per sale<br>
-          Seller payout: <strong>~94%</strong> of product price (before PayPal fees).
+          Platform fee: <strong>6%</strong><br>
+          Seller payout: <strong>~94% (after PayPal fees)</strong>
         </div>
+
         <ul class="plan-features">
-          <li>All features from Free plan</li>
+          <li>Access to all features</li>
           <li>Unlimited products</li>
           <li>Unlimited revenue</li>
           <li>Upload file size: <strong>25MB max</strong></li>
         </ul>
-        <!-- TODO: replace # with your real PayPal Plus subscription URL -->
+
+        <!-- Replace # with PayPal subscription URL later -->
         <a href="#" id="plusPlanLink">
           <button class="plan-button">Sign up for Plus Plan</button>
         </a>
-        <p class="plan-note">
-          Monthly subscription billed via PayPal. Cancel anytime from your PayPal account or from the dashboard.
-        </p>
+
+        <p class="plan-note">Cancel anytime via PayPal or your dashboard.</p>
       </div>
     </div>
 
-    <!-- Pro Plan -->
+    <!-- PRO PLAN -->
     <div class="plan-card">
       <div class="plan-header">
         <div class="plan-name">Pro Plan</div>
-        <div class="plan-price">$75<span style="font-size:14px;font-weight:normal;"> / mo</span></div>
+        <div class="plan-price">$75 <span style="font-size:14px;font-weight:normal;">/ mo</span></div>
       </div>
       <div class="plan-body">
-        <p>Best for established sellers who want the highest payout and maximum upload limit.</p>
+        <p>Maximum earnings and full upload limit.</p>
+
         <div class="plan-fees">
           <strong>Transaction fee:</strong><br>
           PayPal base fee: ~3.9% + fixed fee ~USD $0.30<br>
-          Platform fee: <strong>2%</strong> per sale<br>
-          Seller payout: <strong>~98%</strong> of product price (before PayPal fees).
+          Platform fee: <strong>2%</strong><br>
+          Seller payout: <strong>~98% (after PayPal fees)</strong>
         </div>
+
         <ul class="plan-features">
-          <li>All features from Plus plan</li>
+          <li>Access to all features</li>
           <li>Unlimited products</li>
           <li>Unlimited revenue</li>
-          <li>Upload file size: <strong>50MB max</strong> (Supabase limit)</li>
+          <li>Upload file size: <strong>50MB max</strong></li>
         </ul>
-        <!-- TODO: replace # with your real PayPal Pro subscription URL -->
+
+        <!-- Replace # with PayPal subscription URL later -->
         <a href="#" id="proPlanLink">
           <button class="plan-button">Sign up for Pro Plan</button>
         </a>
-        <p class="plan-note">
-          Monthly subscription billed via PayPal. Cancel anytime from your PayPal account or from the dashboard.
-        </p>
+
+        <p class="plan-note">Cancel anytime via PayPal or your dashboard.</p>
       </div>
     </div>
 
@@ -258,9 +216,9 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
 <footer class="footer"></footer>
 <script>
   fetch("footer.html?v=3")
-    .then(r => r.text())
-    .then(d => document.querySelector(".footer").innerHTML = d)
-    .catch(e => console.error("Footer load failed:", e));
+    .then(r=>r.text())
+    .then(d=>document.querySelector(".footer").innerHTML=d)
+    .catch(e=>console.error("Footer load failed:", e));
 </script>
 
 </body>
