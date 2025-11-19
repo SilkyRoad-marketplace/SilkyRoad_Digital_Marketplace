@@ -1,210 +1,819 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Dashboard – Silky Road</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="/favicon.png">
 <link rel="stylesheet" href="styles.css">
+<title>Dashboard – Silky Road</title>
 
 <style>
-body{
-  font-family: Arial, sans-serif;
-  background:#f7f7f9;
-  margin:0;
-  padding:0;
-}
+body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f9;color:#222}
+.header{background:#fff;border-bottom:1px solid #e4e4e8}
+.container{max-width:1100px;margin:0 auto;padding:16px}
 
-/* Center login box */
-.center-box{
-  max-width:400px;
-  margin:40px auto;
+.banner{position:relative}
+.banner img{width:100%;height:auto;display:block}
+
+/* Footer */
+.footer{background:#222;color:#fff;padding:12px;margin-top:20px;text-align:center}
+
+/* Generic button */
+button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;border-radius:6px;cursor:pointer}
+button:disabled{opacity:0.6;cursor:default}
+
+/* AUTH LAYOUT (before login) */
+.auth-wrapper{
+  display:flex;
+  gap:20px;
+  margin-top:30px;
+  flex-wrap:wrap;
+}
+.auth-card{
   background:#fff;
-  padding:24px;
+  padding:20px;
   border-radius:10px;
-  border:1px solid #e6e6ea;
-  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+  border:1px solid #e4e4e8;
+  flex:1;
+  min-width:300px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05);
 }
-
-/* Input fields */
+.auth-card h2{margin-top:0;}
 .input-field{
   width:100%;
-  padding:12px;
-  margin:8px 0 16px;
+  padding:10px;
   border:1px solid #ccc;
   border-radius:6px;
+  margin-bottom:10px;
   font-size:15px;
 }
-
-/* Buttons */
-.btn{
+.btn-full{
   width:100%;
   padding:12px;
-  border:none;
   border-radius:6px;
+  border:none;
+  cursor:pointer;
   font-size:16px;
   font-weight:bold;
-  cursor:pointer;
+}
+.btn-blue{background:#2b6ef6;color:#fff;}
+.btn-google{background:#dd4b39;color:#fff;margin-top:8px;}
+.btn-dark{background:#333;color:#fff;margin-top:8px;}
+.error-text{color:#d00;font-size:14px;margin-top:5px;}
+.success-text{color:#089600;font-size:14px;margin-top:5px;}
+
+/* DASHBOARD LAYOUT (after login) */
+.dashboard-wrapper{
+  display:flex;
+  gap:20px;
+  margin-top:24px;
 }
 
-.btn-login{
-  background:#0066ff;
-  color:#fff;
-}
-
-.btn-google{
-  background:#dd4b39;
-  color:#fff;
-  margin-top:10px;
-}
-
-.btn-forgot{
-  margin-top:10px;
-  background:#444;
-  color:#fff;
-}
-
-.dashboard-box{
-  max-width:900px;
-  margin:30px auto;
+/* Sidebar */
+.sidebar{
+  width:220px;
   background:#fff;
-  padding:24px;
   border-radius:10px;
-  border:1px solid #e6e6ea;
-  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+  border:1px solid #e4e4e8;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05);
 }
-
-.logout-btn{
-  background:#f33;
-  color:#fff;
-  padding:10px 16px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  float:right;
-  font-weight:bold;
+.sidebar h3{
+  margin:0;
+  padding:16px;
+  border-bottom:1px solid #eee;
 }
-
-.username{
-  font-size:18px;
-  margin-bottom:10px;
+.sidebar button{
+  width:100%;
+  background:none;
   color:#222;
+  text-align:left;
+  padding:10px 16px;
+  border-radius:0;
+  border-bottom:1px solid #f1f1f1;
+}
+.sidebar button.active{
+  background:#2b6ef6;
+  color:#fff;
+}
+
+/* Main content area */
+.dashboard-content{
+  flex:1;
+  background:#fff;
+  border-radius:10px;
+  border:1px solid #e4e4e8;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05);
+  padding:20px;
+}
+
+.dashboard-header-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:16px;
+}
+.logout-btn{
+  background:#f44336;
+  padding:8px 14px;
+}
+
+/* Tables & lists */
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+}
+th,td{
+  padding:8px;
+  border-bottom:1px solid #eee;
+}
+th{background:#fafafa;text-align:left;}
+
+.summary-cards{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-bottom:16px;
+}
+.summary-card{
+  flex:1;
+  min-width:160px;
+  background:#fafafa;
+  border-radius:8px;
+  padding:12px;
+  border:1px solid #e4e4e8;
+}
+
+/* Upload form layout */
+.upload-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.upload-grid label{
+  font-size:14px;
   font-weight:bold;
 }
-
-.text-muted{
-  color:#666;
-  font-size:13px;
-  margin-top:12px;
-  text-align:center;
+.upload-grid input[type="text"],
+.upload-grid input[type="number"],
+.upload-grid textarea{
+  width:100%;
+  padding:8px;
+  border-radius:6px;
+  border:1px solid #ccc;
 }
+.upload-grid textarea{min-height:80px;}
 
+/* Responsive */
+@media(max-width:800px){
+  .dashboard-wrapper{flex-direction:column;}
+  .sidebar{width:100%;}
+}
 </style>
-
 </head>
+
 <body>
 
-<!-- ========================================================== -->
-<!-- AUTO LOGIN OR DASHBOARD (ALL HANDLED BY JS BELOW)          -->
-<!-- ========================================================== -->
+<!-- HEADER -->
+<div id="header"></div>
+<script>
+fetch("header.html?v=1")
+  .then(r=>r.text())
+  .then(d=>document.getElementById("header").innerHTML=d)
+  .catch(e=>console.error("Header load failed:",e));
+</script>
 
-<div id="content"></div>
+<!-- BANNER -->
+<div class="banner">
+  <img src="banner.jpg" alt="Silky Road Banner">
+</div>
 
-<!-- Supabase Auth Logic -->
+<main class="container">
+  <!-- This container will be filled by JS -->
+  <div id="content"></div>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer"></footer>
+<script>
+fetch("footer.html?v=1")
+  .then(r=>r.text())
+  .then(d=>document.querySelector(".footer").innerHTML=d)
+  .catch(e=>console.error("Footer load failed:",e));
+</script>
+
+<!-- LOGIC -->
 <script type="module">
 import { supabase } from "./js/supabase-config.js";
 
-const content = document.getElementById("content");
+const contentEl = document.getElementById("content");
 
-// 🔵 FUNCTION 1 — Show Login Screen
-function showLoginUI(){
-  content.innerHTML = `
-    <div class="center-box">
-      <h2 style="text-align:center;">Login to Silky Road</h2>
+/* ---------- Helpers ---------- */
 
-      <input type="email" id="email" class="input-field" placeholder="Email">
-      <input type="password" id="password" class="input-field" placeholder="Password">
+function formatMoney(cents){
+  if (!cents && cents !== 0) return "USD 0.00";
+  return "USD " + (cents / 100).toFixed(2);
+}
 
-      <button id="emailLoginBtn" class="btn btn-login">Sign in with Email</button>
-      <button id="googleLoginBtn" class="btn btn-google">Sign in with Google</button>
-      <button id="forgotBtn" class="btn btn-forgot">Forgot Password?</button>
+/* ---------- AUTH UI (before login) ---------- */
 
-      <p id="loginMessage" class="text-muted"></p>
+function renderAuthUI(){
+  contentEl.innerHTML = `
+    <h1 style="margin-top:20px;">Account Login / Registration</h1>
+
+    <div class="auth-wrapper">
+      <!-- SIGN UP LEFT -->
+      <div class="auth-card">
+        <h2>Create an Account</h2>
+        <input type="text" id="firstName" class="input-field" placeholder="First Name" required>
+        <input type="text" id="lastName" class="input-field" placeholder="Last Name" required>
+        <input type="email" id="signupEmail" class="input-field" placeholder="Email Address" required>
+        <input type="password" id="signupPassword" class="input-field" placeholder="Password" required>
+        <button id="signupBtn" class="btn-full btn-blue">Sign Up</button>
+        <p id="signupMessage"></p>
+      </div>
+
+      <!-- LOGIN RIGHT -->
+      <div class="auth-card">
+        <h2>Login</h2>
+        <input type="email" id="loginEmail" class="input-field" placeholder="Email" required>
+        <input type="password" id="loginPassword" class="input-field" placeholder="Password" required>
+        <button id="loginBtn" class="btn-full btn-blue">Sign in with Email</button>
+        <button id="googleBtn" class="btn-full btn-google">Sign in with Google</button>
+        <button id="forgotBtn" class="btn-full btn-dark">Forgot Password?</button>
+        <p id="loginMessage"></p>
+      </div>
     </div>
   `;
 
-  // ⭐ EMAIL LOGIN HANDLER
-  document.getElementById("emailLoginBtn").onclick = async () => {
-    let email = document.getElementById("email").value.trim();
-    let password = document.getElementById("password").value.trim();
+  const signupBtn = document.getElementById("signupBtn");
+  const loginBtn = document.getElementById("loginBtn");
+  const googleBtn = document.getElementById("googleBtn");
+  const forgotBtn = document.getElementById("forgotBtn");
+
+  /* SIGN UP */
+  signupBtn.onclick = async () => {
+    const first = document.getElementById("firstName").value.trim();
+    const last = document.getElementById("lastName").value.trim();
+    const email = document.getElementById("signupEmail").value.trim();
+    const password = document.getElementById("signupPassword").value.trim();
+    const msg = document.getElementById("signupMessage");
+
+    if (!first || !last){
+      msg.textContent = "First and last name are required.";
+      msg.className = "error-text";
+      return;
+    }
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options:{
+        data:{ first_name:first, last_name:last },
+        emailRedirectTo:"https://silkyroad.vercel.app/dashboard.html"
+      }
+    });
+
+    if (error){
+      msg.textContent = error.message;
+      msg.className = "error-text";
+    } else {
+      msg.textContent = "Sign-up successful. Please check your email to confirm.";
+      msg.className = "success-text";
+    }
+  };
+
+  /* LOGIN EMAIL */
+  loginBtn.onclick = async () => {
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value.trim();
+    const msg = document.getElementById("loginMessage");
 
     const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error){
-      document.getElementById("loginMessage").textContent = "Invalid email or password.";
-      return;
+      msg.textContent = "Invalid email or password.";
+      msg.className = "error-text";
+    } else {
+      msg.textContent = "Login successful. Redirecting...";
+      msg.className = "success-text";
+      window.location.reload();
     }
-
-    window.location.reload(); // reload to show dashboard
   };
 
-  // ⭐ GOOGLE LOGIN
-  document.getElementById("googleLoginBtn").onclick = async () => {
+  /* LOGIN GOOGLE */
+  googleBtn.onclick = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: "https://silkyroad.vercel.app/dashboard.html"
+      provider:"google",
+      options:{
+        redirectTo:"https://silkyroad.vercel.app/dashboard.html"
       }
     });
     if (error){
-      alert("Google login failed.");
+      const msg = document.getElementById("loginMessage");
+      msg.textContent = "Google login failed.";
+      msg.className = "error-text";
     }
   };
 
-  // ⭐ FORGOT PASSWORD
-  document.getElementById("forgotBtn").onclick = () => {
-    window.location.href = "forgot.html";
+  /* FORGOT PASSWORD: uses email from loginEmail field */
+  forgotBtn.onclick = async () => {
+    const email = document.getElementById("loginEmail").value.trim();
+    const msg = document.getElementById("loginMessage");
+
+    if (!email){
+      msg.textContent = "Enter your email above first, then click Forgot Password.";
+      msg.className = "error-text";
+      return;
+    }
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo:"https://silkyroad.vercel.app/reset.html"
+    });
+
+    if (error){
+      msg.textContent = "Error sending reset email.";
+      msg.className = "error-text";
+    } else {
+      msg.textContent = "Reset link sent! Check your email.";
+      msg.className = "success-text";
+    }
   };
 }
 
-// 🔵 FUNCTION 2 — Show Dashboard
-function showDashboardUI(user){
-  const name = user.email.split("@")[0];
+/* ---------- DASHBOARD UI (after login) ---------- */
 
-  content.innerHTML = `
-    <div class="dashboard-box">
-      <button id="logoutBtn" class="logout-btn">Logout</button>
-      <h2>Welcome to your Dashboard</h2>
+function renderDashboardUI(user){
+  const meta = user.user_metadata || {};
+  const firstName = meta.first_name || "";
+  const lastName = meta.last_name || "";
+  const displayName = (firstName || lastName) ? (firstName + " " + lastName).trim() : (user.email || "Seller");
 
-      <p class="username">Hello, ${name}</p>
+  contentEl.innerHTML = `
+    <div class="dashboard-header-row">
+      <div>
+        <h1>Seller Dashboard</h1>
+        <p style="margin:4px 0;">Welcome, <strong id="welcomeName">${displayName}</strong></p>
+      </div>
+      <div>
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+      </div>
+    </div>
 
-      <p>Here is your Silky Road seller/buyer dashboard.</p>
+    <div class="dashboard-wrapper">
+      <!-- SIDEBAR -->
+      <div class="sidebar">
+        <h3>Navigation</h3>
+        <button class="sidebar-link active" data-section="overview">Overview</button>
+        <button class="sidebar-link" data-section="products">My Products</button>
+        <button class="sidebar-link" data-section="upload">Upload Product</button>
+        <button class="sidebar-link" data-section="orders">My Orders</button>
+        <button class="sidebar-link" data-section="summary">Sales Summary</button>
+        <button class="sidebar-link" data-section="account">Account Settings</button>
+      </div>
 
-      <ul style="line-height:1.8;">
-        <li><a href="my-products.html">My Products</a></li>
-        <li><a href="upload.html">Upload New Product</a></li>
-        <li><a href="orders.html">My Orders</a></li>
-        <li><a href="account.html">Account Settings</a></li>
-      </ul>
+      <!-- MAIN CONTENT -->
+      <div class="dashboard-content">
+        <!-- overview -->
+        <section id="section-overview">
+          <h2>Overview</h2>
+          <p>Use the sidebar to manage your products, upload new items, view orders, and update your account details.</p>
+        </section>
+
+        <!-- my products -->
+        <section id="section-products" style="display:none;">
+          <h2>My Products</h2>
+          <p>Manage the products you are selling on Silky Road.</p>
+          <table id="productsTable">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Price</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <p id="productsEmpty" class="text-muted"></p>
+        </section>
+
+        <!-- upload product -->
+        <section id="section-upload" style="display:none;">
+          <h2>Upload New Product</h2>
+          <p>Upload a digital product or provide an external download link. Main file max 10 MB, each image max 5 MB.</p>
+          <form id="uploadForm">
+            <div class="upload-grid">
+              <div>
+                <label>Title</label>
+                <input type="text" id="productTitle" required>
+
+                <label>Price (USD)</label>
+                <input type="number" id="productPrice" step="0.01" min="0" required>
+
+                <label>External Download Link (optional)</label>
+                <input type="text" id="externalLink" placeholder="https://...">
+              </div>
+              <div>
+                <label>Description</label>
+                <textarea id="productDescription"></textarea>
+
+                <label>Main Product File (max 10 MB)</label>
+                <input type="file" id="productFile" accept=".zip,.pdf,.mp3,.mp4,.doc,.ppt,.xls,.txt">
+              </div>
+            </div>
+
+            <h3 style="margin-top:16px;">Product Images (up to 3)</h3>
+            <p style="font-size:13px;color:#666;margin-top:4px;">Supported: JPG, PNG, GIF — each max 5 MB.</p>
+
+            <div class="upload-grid">
+              <div>
+                <label>Image 1</label>
+                <input type="file" id="image1" accept="image/jpeg,image/png,image/gif">
+              </div>
+              <div>
+                <label>Image 2</label>
+                <input type="file" id="image2" accept="image/jpeg,image/png,image/gif">
+              </div>
+              <div>
+                <label>Image 3</label>
+                <input type="file" id="image3" accept="image/jpeg,image/png,image/gif">
+              </div>
+            </div>
+
+            <button type="submit" style="margin-top:16px;">Upload Product</button>
+            <p id="uploadMessage"></p>
+          </form>
+        </section>
+
+        <!-- orders -->
+        <section id="section-orders" style="display:none;">
+          <h2>My Orders (as Seller)</h2>
+          <table id="ordersTable">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Product</th>
+                <th>Status</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <p id="ordersEmpty" class="text-muted"></p>
+        </section>
+
+        <!-- sales summary -->
+        <section id="section-summary" style="display:none;">
+          <h2>Sales Summary</h2>
+          <div class="summary-cards">
+            <div class="summary-card">
+              <div style="font-size:13px;color:#666;">Total Orders</div>
+              <div id="summaryOrders" style="font-size:20px;font-weight:bold;">0</div>
+            </div>
+            <div class="summary-card">
+              <div style="font-size:13px;color:#666;">Total Revenue</div>
+              <div id="summaryRevenue" style="font-size:20px;font-weight:bold;">USD 0.00</div>
+            </div>
+          </div>
+          <p style="font-size:13px;color:#666;">This summary is based on paid orders where you are the seller.</p>
+        </section>
+
+        <!-- account settings -->
+        <section id="section-account" style="display:none;">
+          <h2>Account Settings</h2>
+          <p>Update your profile information.</p>
+          <form id="accountForm">
+            <div class="upload-grid">
+              <div>
+                <label>First Name</label>
+                <input type="text" id="accFirstName">
+                <label>Last Name</label>
+                <input type="text" id="accLastName">
+              </div>
+              <div>
+                <label>Display Name</label>
+                <input type="text" id="accDisplayName">
+                <label>PayPal Email (for payouts)</label>
+                <input type="text" id="accPaypalEmail" placeholder="your-paypal@example.com">
+              </div>
+            </div>
+            <button type="submit" style="margin-top:14px;">Save Settings</button>
+            <p id="accountMessage"></p>
+          </form>
+        </section>
+      </div>
     </div>
   `;
 
-  // ⭐ LOGOUT BUTTON
+  /* Logout */
   document.getElementById("logoutBtn").onclick = async () => {
     await supabase.auth.signOut();
-    window.location.reload(); // Refresh to show login
+    window.location.reload();
   };
+
+  /* Sidebar navigation */
+  document.querySelectorAll(".sidebar-link").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      document.querySelectorAll(".sidebar-link").forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      const section = btn.getAttribute("data-section");
+      ["overview","products","upload","orders","summary","account"].forEach(s=>{
+        document.getElementById("section-"+s).style.display = (s===section) ? "block" : "none";
+      });
+    });
+  });
+
+  /* Prefill account settings */
+  const meta = user.user_metadata || {};
+  document.getElementById("accFirstName").value = meta.first_name || "";
+  document.getElementById("accLastName").value = meta.last_name || "";
+  document.getElementById("accDisplayName").value = meta.display_name || "";
+  document.getElementById("accPaypalEmail").value = meta.paypal_email || "";
+
+  setupAccountSettings(user);
+  loadMyProducts(user);
+  loadOrdersAndSummary(user);
+  setupUploadForm(user);
 }
 
-// =============================================================
-// MAIN LOGIC — CHECK IF LOGGED IN OR SHOW LOGIN
-// =============================================================
+/* ---------- Account Settings ---------- */
 
-supabase.auth.getSession().then(({ data }) => {
+function setupAccountSettings(user){
+  const form = document.getElementById("accountForm");
+  const msg = document.getElementById("accountMessage");
+
+  form.addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    const firstName = document.getElementById("accFirstName").value.trim();
+    const lastName = document.getElementById("accLastName").value.trim();
+    const displayName = document.getElementById("accDisplayName").value.trim();
+    const paypalEmail = document.getElementById("accPaypalEmail").value.trim();
+
+    const { error } = await supabase.auth.updateUser({
+      data:{
+        first_name:firstName,
+        last_name:lastName,
+        display_name:displayName,
+        paypal_email:paypalEmail
+      }
+    });
+
+    if (error){
+      msg.textContent = error.message;
+      msg.className = "error-text";
+    } else {
+      msg.textContent = "Settings updated.";
+      msg.className = "success-text";
+      const welcomeEl = document.getElementById("welcomeName");
+      if (welcomeEl){
+        const name = (firstName || lastName) ? (firstName + " " + lastName).trim() : displayName || user.email;
+        welcomeEl.textContent = name;
+      }
+    }
+  });
+}
+
+/* ---------- My Products ---------- */
+
+async function loadMyProducts(user){
+  const tableBody = document.querySelector("#productsTable tbody");
+  const emptyMsg = document.getElementById("productsEmpty");
+  tableBody.innerHTML = "";
+  emptyMsg.textContent = "";
+
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .eq("seller_id", user.id)
+    .order("created_at", { ascending:false });
+
+  if (error){
+    console.error("loadMyProducts error:", error);
+    emptyMsg.textContent = "Error loading products.";
+    return;
+  }
+
+  if (!data || data.length === 0){
+    emptyMsg.textContent = "You have not uploaded any products yet.";
+    return;
+  }
+
+  data.forEach(p=>{
+    const tr = document.createElement("tr");
+    const createdDate = p.created_at ? new Date(p.created_at).toLocaleDateString() : "-";
+    const price = (p.price !== undefined && p.price !== null) ? ("USD " + Number(p.price).toFixed(2)) : "USD 0.00";
+
+    tr.innerHTML = `
+      <td>${p.title || "Untitled"}</td>
+      <td>${price}</td>
+      <td>${createdDate}</td>
+      <td><button data-id="${p.id}" class="deleteProductBtn" style="background:#f44336;padding:6px 10px;font-size:13px;">Delete</button></td>
+    `;
+    tableBody.appendChild(tr);
+  });
+
+  document.querySelectorAll(".deleteProductBtn").forEach(btn=>{
+    btn.addEventListener("click", async ()=>{
+      const id = btn.getAttribute("data-id");
+      if (!confirm("Delete this product?")) return;
+      const { error } = await supabase.from("products").delete().eq("id", id);
+      if (error){
+        alert("Error deleting product.");
+      } else {
+        loadMyProducts(user);
+      }
+    });
+  });
+}
+
+/* ---------- Upload Product ---------- */
+
+function setupUploadForm(user){
+  const form = document.getElementById("uploadForm");
+  const msg = document.getElementById("uploadMessage");
+
+  form.addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    msg.textContent = "";
+    msg.className = "";
+
+    const title = document.getElementById("productTitle").value.trim();
+    const priceVal = parseFloat(document.getElementById("productPrice").value);
+    const description = document.getElementById("productDescription").value.trim();
+    const externalLink = document.getElementById("externalLink").value.trim();
+    const fileInput = document.getElementById("productFile");
+    const img1 = document.getElementById("image1").files[0] || null;
+    const img2 = document.getElementById("image2").files[0] || null;
+    const img3 = document.getElementById("image3").files[0] || null;
+
+    if (!title){
+      msg.textContent = "Title is required.";
+      msg.className = "error-text";
+      return;
+    }
+    if (isNaN(priceVal) || priceVal < 0){
+      msg.textContent = "Price must be a valid number.";
+      msg.className = "error-text";
+      return;
+    }
+
+    const mainFile = fileInput.files[0] || null;
+    const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10 MB
+    const MAX_IMG_BYTES = 5 * 1024 * 1024;   // 5 MB
+
+    if (!mainFile && !externalLink){
+      msg.textContent = "Either upload a main file or provide an external download link.";
+      msg.className = "error-text";
+      return;
+    }
+
+    if (mainFile && mainFile.size > MAX_FILE_BYTES){
+      msg.textContent = "Main file exceeds 10 MB limit.";
+      msg.className = "error-text";
+      return;
+    }
+    for (const img of [img1,img2,img3]){
+      if (img && img.size > MAX_IMG_BYTES){
+        msg.textContent = "One of the images exceeds 5 MB limit.";
+        msg.className = "error-text";
+        return;
+      }
+    }
+
+    msg.textContent = "Uploading…";
+    msg.className = "success-text";
+
+    let downloadUrl = externalLink || "";
+    let image1Url = null, image2Url = null, image3Url = null;
+
+    try{
+      // Upload main file to storage if present
+      if (mainFile){
+        const path = `${user.id}/files/${Date.now()}_${mainFile.name}`;
+        const { data, error } = await supabase.storage.from("products").upload(path, mainFile);
+        if (error) throw error;
+        const { data:pub } = supabase.storage.from("products").getPublicUrl(path);
+        downloadUrl = pub.publicUrl;
+      }
+
+      // Upload images
+      async function uploadImage(file){
+        const path = `${user.id}/images/${Date.now()}_${file.name}`;
+        const { data, error } = await supabase.storage.from("products").upload(path, file);
+        if (error) throw error;
+        const { data:pub } = supabase.storage.from("products").getPublicUrl(path);
+        return pub.publicUrl;
+      }
+
+      if (img1) image1Url = await uploadImage(img1);
+      if (img2) image2Url = await uploadImage(img2);
+      if (img3) image3Url = await uploadImage(img3);
+
+      // Insert DB row
+      const { error:insertError } = await supabase.from("products").insert({
+        seller_id: user.id,
+        title,
+        description,
+        price: priceVal,
+        download_url: downloadUrl,
+        image1_url: image1Url,
+        image2_url: image2Url,
+        image3_url: image3Url
+      });
+
+      if (insertError) throw insertError;
+
+      msg.textContent = "Product uploaded successfully.";
+      msg.className = "success-text";
+
+      form.reset();
+      loadMyProducts(user);
+    } catch(err){
+      console.error("upload error:", err);
+      msg.textContent = "Error uploading product.";
+      msg.className = "error-text";
+    }
+  });
+}
+
+/* ---------- Orders & Sales Summary ---------- */
+
+async function loadOrdersAndSummary(user){
+  const tableBody = document.querySelector("#ordersTable tbody");
+  const emptyMsg = document.getElementById("ordersEmpty");
+  const summaryOrders = document.getElementById("summaryOrders");
+  const summaryRevenue = document.getElementById("summaryRevenue");
+
+  tableBody.innerHTML = "";
+  emptyMsg.textContent = "";
+  summaryOrders.textContent = "0";
+  summaryRevenue.textContent = "USD 0.00";
+
+  const { data, error } = await supabase
+    .from("orders")
+    .select("id, product_id, amount_cents, status, paid_at")
+    .eq("seller_id", user.id)
+    .order("paid_at", { ascending:false });
+
+  if (error){
+    console.error("orders error:", error);
+    emptyMsg.textContent = "Error loading orders.";
+    return;
+  }
+
+  if (!data || data.length === 0){
+    emptyMsg.textContent = "No orders yet.";
+    return;
+  }
+
+  // Fetch product titles for mapping
+  const productIds = [...new Set(data.map(o=>o.product_id).filter(Boolean))];
+  let productMap = {};
+  if (productIds.length > 0){
+    const { data:prodData, error:prodError } = await supabase
+      .from("products")
+      .select("id,title")
+      .in("id", productIds);
+    if (!prodError && prodData){
+      prodData.forEach(p=>{ productMap[p.id] = p.title; });
+    }
+  }
+
+  let totalOrders = 0;
+  let totalCents = 0;
+
+  data.forEach(o=>{
+    const tr = document.createElement("tr");
+    const dateStr = o.paid_at ? new Date(o.paid_at).toLocaleDateString() : "-";
+    const title = productMap[o.product_id] || "(Unknown product)";
+    const amountText = o.amount_cents != null ? formatMoney(o.amount_cents) : "USD 0.00";
+
+    tr.innerHTML = `
+      <td>${dateStr}</td>
+      <td>${title}</td>
+      <td>${o.status || "-"}</td>
+      <td>${amountText}</td>
+    `;
+    tableBody.appendChild(tr);
+
+    if (o.status === "paid"){
+      totalOrders += 1;
+      if (typeof o.amount_cents === "number") totalCents += o.amount_cents;
+    }
+  });
+
+  summaryOrders.textContent = String(totalOrders);
+  summaryRevenue.textContent = formatMoney(totalCents);
+}
+
+/* ---------- MAIN: Check session ---------- */
+
+supabase.auth.getSession().then(({ data })=>{
   if (data.session){
-    // user is logged in → show dashboard
-    showDashboardUI(data.session.user);
+    renderDashboardUI(data.session.user);
   } else {
-    // user not logged in → show login UI
-    showLoginUI();
+    renderAuthUI();
   }
 });
 </script>
