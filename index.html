@@ -22,31 +22,41 @@ nav .links button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;bo
 .banner img{width:100%;height:auto;display:block}
 .banner-text{display:none !important;}
 
+/* ⭐ CATEGORY BAR (icons + hover + mobile grid) */
 .category-bar{
   margin:20px 0;
   background:#ffffff;
-  padding:12px;
+  padding:12px 16px;
   border:1px solid #e6e6ea;
   display:flex;
-  gap:20px;
+  gap:24px;
   font-weight:bold;
   flex-wrap:wrap;
+  border-radius:8px;
 }
-.category-bar > div{position:relative; cursor:pointer;}
+.category-bar > div{
+  position:relative;
+  cursor:pointer;
+  padding:6px 0;
+}
 .category-bar div ul{
   display:none;
   position:absolute;
   background:#fff;
   list-style:none;
-  padding:10px;
+  padding:10px 14px;
   margin:0;
   border:1px solid #ccc;
   width:220px;
   z-index:999;
+  border-radius:6px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
 }
 .category-bar div:hover ul{display:block;}
 .category-bar ul li{padding:6px 0;}
 .category-bar a{text-decoration:none;color:#333;font-weight:normal;}
+.category-bar a:hover{color:#2b6ef6;}
+.category-bar > div:hover{color:#2b6ef6;}
 
 .row{display:flex;gap:16px;margin-top:16px}
 .main{flex:1}
@@ -72,8 +82,33 @@ nav .links button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;bo
   vertical-align: middle;
 }
 
+/* ⭐ MOBILE LAYOUT */
 @media(max-width:600px){
   .card{width:calc(50% - 6px);}
+
+  .category-bar{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:14px;
+    padding:16px;
+  }
+
+  /* 🏷️ All spans full width (row 1) */
+  .category-bar .all-category{
+    grid-column:1 / -1;
+    text-align:left;
+  }
+
+  .category-bar > div{
+    width:100%;
+    text-align:left;
+  }
+
+  .category-bar div ul{
+    left:50%;
+    transform:translateX(-50%);
+    width:200px;
+  }
 }
 
 .footer{background:#222;color:#fff;padding:12px;margin-top:20px;text-align:center}
@@ -96,7 +131,7 @@ button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;border-radius
   <img src="banner.jpg" alt="Silky Road Banner">
   <div class="banner-text">
     <h1>Discover & Download Digital Products Instantly</h1>
-    <p>Ebooks, art, music, software, and more — delivered automatically with no shipping required.</p>
+    <p>Ebooks, art, music, and more — delivered automatically with no shipping required.</p>
   </div>
 </div>
 
@@ -111,7 +146,6 @@ Welcome to <strong>Silky Road</strong> — a modern digital marketplace where yo
 <p style="font-size:18px;line-height:1.6;">
 Creators can join Silky Road for free and start selling immediately without any upfront costs. Upload your digital products (up to 10MB) or add an external download link for larger files, set your own pricing, and receive global payments directly to your PayPal account. Silky Road handles file delivery, payment processing, and secure hosting — so you can focus on creating valuable digital content while earning passive income.
 </p>
-
 
 <div style="margin-top:24px;">
   <h2 style="font-size:24px;margin-bottom:12px;">Start Exploring or Become a Seller Today</h2>
@@ -128,8 +162,7 @@ Creators can join Silky Road for free and start selling immediately without any 
   </div>
 </div>
 
-
-<!-- Category Bar -->
+<!-- ⭐ Category Bar with icons -->
 <div class="category-bar">
 
   <div class="all-category">🏷️ All
@@ -183,7 +216,6 @@ Creators can join Silky Road for free and start selling immediately without any 
   </div>
 
 </div>
-
 
 <section class="main">
   <h3>Featured products</h3>
