@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Forgot Password – Silky Road</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<h2 style="text-align:center;">Forgot Password</h2>
+
+<div style="max-width:400px;margin:20px auto;" class="card">
+
+  <form id="forgotForm">
+    <label>Email Address</label>
+    <input type="email" id="email" style="width:100%;padding:10px;margin-top:8px;border:1px solid #ccc;border-radius:6px;">
+
+    <button type="submit" style="margin-top:16px;padding:10px 20px;">Send Reset Link</button>
+  </form>
+
+  <p id="status" style="margin-top:10px;color:#555;"></p>
+
+</div>
+
+<script type="module">
+  import { supabase } from "./supabase-config.js";
+
+  const form = document.getElementById("forgotForm");
+  const status = document.getElementById("status");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value;
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: "https://silkyroad.vercel.app/reset.html"
+    });
+
+    if (error) {
+      status.textContent = "Error sending reset email.";
+      console.error(error);
+      return;
+    }
+
+    status.textContent = "Reset link sent! Check your email.";
+  });
+</script>
+
+</body>
+</html>
