@@ -12,6 +12,21 @@
 body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f9;color:#222}
 .container{max-width:1100px;margin:0 auto;padding:16px}
 
+/* ⭐ FIX LOGIN PAGE BANNER SIZE — MATCH index.html exactly */
+.banner {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+.banner img {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 420px;  /* ⭐ Same height as your index banner */
+  object-fit: cover;
+}
+
 /* Cards exactly like your product cards */
 .card-auth{
   background:#fff;
@@ -220,4 +235,3 @@ forgotBtn.onclick = async ()=>{
 
 </body>
 </html>
-
