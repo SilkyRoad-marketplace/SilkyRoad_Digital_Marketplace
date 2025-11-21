@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="/favicon.png">
+<link rel="stylesheet" href="styles.css">
+<title>Account Settings – Silky Road Marketplace</title>
+
+<style>
+body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f9;color:#222}
+.container{max-width:1100px;margin:0 auto;padding:16px}
+
+.card{
+  background:#fff;
+  padding:20px;
+  border:1px solid #e6e6ea;
+  border-radius:8px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05);
+  margin-bottom:20px;
+}
+
+.input-field{
+  width:100%;
+  padding:10px;
+  border:1px solid #ccc;
+  border-radius:6px;
+  font-size:16px;
+  margin-bottom:12px;
+}
+
+.btn-blue{
+  background:#2b6ef6;
+  color:#fff;
+  border:none;
+  padding:12px 20px;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:16px;
+}
+
+.btn-red{
+  background:#d63333;
+  color:#fff;
+  border:none;
+  padding:12px 20px;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:16px;
+}
+
+.success-text{color:#089600;}
+.error-text{color:#d00;}
+
+.banner img{
+  width:100%;
+  height:auto;
+  max-height:420px;
+  object-fit:cover;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div id="header"></div>
+<script>
+fetch("header.html?v=3")
+  .then(r=>r.text())
+  .then(d=>document.getElementById("header").innerHTML=d);
+</script>
+
+<!-- BANNER -->
+<div class="banner">
+  <img src="banner.jpg" alt="Silky Road Banner">
+</div>
+
+<main class="container">
+
+<h1>Account Settings</h1>
+<p style="font-size:18px;line-height:1.6;">
+Manage your personal information, PayPal settings, and account preferences.
+</p>
+
+<!-- PROFILE CARD -->
+<div class="card">
+  <h2>Profile Information</h2>
+
+  <input id="firstName" class="input-field" type="text" placeholder="First Name">
+  <input id="lastName" class="input-field" type="text" placeholder="Last Name">
+  <input id="emailField" class="input-field" type="email" placeholder="Email (read-only)" readonly>
+
+  <button id="saveProfileBtn" class="btn-blue">Save Profile</button>
+  <p id="profileMessage"></p>
+</div>
+
+<!-- PAYPAL CARD -->
+<div class="card">
+  <h2>PayPal Settings</h2>
+
+  <input id="paypalField" class="input-field" type="text"
+         placeholder="Your PayPal Email (Required to Receive Payments)">
+
+  <button id="savePaypalBtn" class="btn-blue">Save PayPal</button>
+  <p id="paypalMessage"></p>
+</div>
+
+<!-- DELETE ACCOUNT -->
+<div class="card">
+  <h2>Delete Account</h2>
+  <p style="color:#555;">
+    Deleting your account will remove your products, orders, uploaded files,
+    and seller data from the Silky Road Marketplace permanently.
+  </p>
+
+  <button id="deleteBtn" class="btn-red">Delete My Account</button>
+</div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer"></footer>
+<script>
+fetch("footer.html?v=3")
+  .then(r=>r.text())
+  .then(d=>document.querySelector(".footer").innerHTML=d);
+</script>
+
+<!-- LOGIC -->
+<script type="module">
+import { supabase } from "./js/supabase-config.js";
+
+/* ----------------------------------------------------
+   AUTO-REDIRECT if NOT logged in
+---------------------------------------------------- */
+supabase.auth.getSession().then(({ data })=>{
+  if (!data.session){
+    window.location.href = "login.html";
+  }
+});
+
+/* ----------------------------------------------------
+   LOAD USER DATA
+---------------------------------------------------- */
+async function loadProfile(){
+  const { data } = await supabase.auth.getUser();
+  const user = data.user;
+
+  if (!user) return;
+
+  // Fill default fields
+  firstName.value = user.user_metadata.first_name || "";
+  lastName.value  = user.user_metadata.last_name || "";
+  emailField.value = user.email;
+
+  // Load PayPal from DB (profiles table or your table)
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+  if (profile){
+    paypalField.value = profile.paypal || "";
+  }
+}
+
+loadProfile();
+
+/* ----------------------------------------------------
+   SAVE PROFILE
+---------------------------------------------------- */
+saveProfileBtn.onclick = async ()=>{
+  const msg = profileMessage;
+  msg.textContent = "";
+
+  const first = firstName.value.trim();
+  const last  = lastName.value.trim();
+
+  const { error } = await supabase.auth.updateUser({
+    data:{ first_name:first, last_name:last }
+  });
+
+  if (error){
+    msg.textContent = error.message;
+    msg.className = "error-text";
+  } else {
+    msg.textContent = "Profile saved successfully ✔";
+    msg.className = "success-text";
+  }
+};
+
+/* ----------------------------------------------------
+   SAVE PAYPAL
+---------------------------------------------------- */
+savePaypalBtn.onclick = async ()=>{
+  const msg = paypalMessage;
+  msg.textContent = "";
+
+  const { data } = await supabase.auth.getUser();
+  const user = data.user;
+
+  const paypalEmail = paypalField.value.trim();
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ paypal: paypalEmail })
+    .eq("id", user.id);
+
+  if (error){
+    msg.textContent = error.message;
+    msg.className = "error-text";
+  } else {
+    msg.textContent = "PayPal saved ✔";
+    msg.className = "success-text";
+  }
+};
+
+/* ----------------------------------------------------
+   DELETE ACCOUNT (FULL DELETE API)
+---------------------------------------------------- */
+deleteBtn.onclick = async ()=>{
+  const confirmDelete = confirm(
+    "You'll lose ALL products, files, orders, and your account.\nAre you sure?"
+  );
+
+  if (!confirmDelete) return;
+
+  const { data } = await supabase.auth.getUser();
+  const user = data.user;
+
+  if (!user){
+    alert("No user session.");
+    return;
+  }
+
+  const response = await fetch("/api/delete-account.js",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({ user_id:user.id })
+  });
+
+  const result = await response.json();
+
+  if (result.error){
+    alert("Error: " + result.error);
+  } else {
+    await supabase.auth.signOut();
+    alert("Account deleted.");
+    window.location.href = "index.html";
+  }
+};
+</script>
+
+</body>
+</html>
