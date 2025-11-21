@@ -2,15 +2,13 @@ export const config = {
   runtime: "edge"
 };
 
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
 export default async function handler(req) {
-  if (req.method !== "POST") {
-    return new Response(
-      JSON.stringify({ error: "Method not allowed" }),
-      { status: 405 }
-    );
-  }
+  return new Response(
+    JSON.stringify({ ok: true, message: "Edge runtime working" }),
+    { status: 200 }
+  );
+}
+
 
   let body = {};
   try {
