@@ -1,51 +1,108 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Reset Password – Silky Road</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.png">
 <link rel="stylesheet" href="styles.css">
+<title>Reset Password – Silky Road Marketplace</title>
+
+<style>
+body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f9;color:#222}
+.container{max-width:500px;margin:40px auto;padding:20px;background:#fff;border-radius:8px;
+  border:1px solid #e6e6ea;box-shadow:0 2px 6px rgba(0,0,0,0.05);}
+.input-field{width:100%;padding:12px;border:1px solid #ccc;border-radius:6px;margin-bottom:12px;}
+.btn-blue{width:100%;padding:12px;background:#2b6ef6;color:#fff;border:none;border-radius:6px;
+  font-size:16px;font-weight:bold;cursor:pointer;}
+.error-text{color:#d00;font-size:14px;}
+.success-text{color:#089600;font-size:14px;}
+.strength-bar{height:8px;border-radius:4px;background:#ddd;margin:-6px 0 10px 0;}
+.strength-weak{background:#ff4d4d;}
+.strength-medium{background:#ff9900;}
+.strength-strong{background:#2ecc71;}
+</style>
 </head>
 
 <body>
 
-<h2 style="text-align:center;">Reset Your Password</h2>
+<div class="container">
+  <h2>Reset Your Password</h2>
+  <p>Enter your new password below.</p>
 
-<div style="max-width:400px;margin:20px auto;" class="card">
+  <input id="newPassword" class="input-field" type="password" placeholder="New Password">
+  <input id="confirmPassword" class="input-field" type="password" placeholder="Confirm Password">
 
-  <form id="resetForm">
-    <label>New Password</label>
-    <input type="password" id="newPassword" style="width:100%;padding:10px;margin-top:8px;border:1px solid #ccc;border-radius:6px;">
+  <div id="strengthBar" class="strength-bar"></div>
 
-    <button type="submit" style="margin-top:16px;padding:10px 20px;">Reset Password</button>
-  </form>
+  <p id="resetMessage"></p>
 
-  <p id="message" style="margin-top:10px;color:#555;"></p>
-
+  <button id="resetBtn" class="btn-blue" disabled>Reset Password</button>
 </div>
 
 <script type="module">
-  import { supabase } from "./supabase-config.js";
+import { supabase } from "./js/supabase-config.js";
 
-  const form = document.getElementById("resetForm");
-  const message = document.getElementById("message");
+/* -------------------------------
+   READ RESET TOKEN FROM URL
+---------------------------------*/
+const url = new URL(window.location.href);
+const token = url.searchParams.get("token_hash");
+const type = url.searchParams.get("type");
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+if (!token || type !== "recovery") {
+  document.getElementById("resetMessage").textContent =
+    "Invalid or expired reset link.";
+  document.getElementById("resetMessage").className = "error-text";
+  document.getElementById("resetBtn").style.display = "none";
+}
 
-    const newPassword = document.getElementById("newPassword").value;
+/* -------------------------------
+   PASSWORD STRENGTH CHECK
+---------------------------------*/
+const pwd = document.getElementById("newPassword");
+const pwd2 = document.getElementById("confirmPassword");
+const bar = document.getElementById("strengthBar");
+const resetBtn = document.getElementById("resetBtn");
 
-    const { error } = await supabase.auth.updateUser({
-      password: newPassword
-    });
+function updateStrength() {
+  const pass = pwd.value;
+  const confirm = pwd2.value;
 
-    if (error) {
-      message.textContent = "Error resetting password.";
-      console.error(error);
-      return;
-    }
+  let score = 0;
+  if (pass.length >= 8) score++;
+  if (/[0-9]/.test(pass)) score++;
+  if (/[!@#$%^&*(),.?":{}|<>]/.test(pass)) score++;
+  if (pass === confirm && pass.length > 0) score++;
 
-    message.textContent = "Password reset successful! You can now log in.";
-  });
+  if (pass.length === 0) bar.className = "strength-bar";
+  else if (score <= 1) bar.className = "strength-bar strength-weak";
+  else if (score === 2 || score === 3) bar.className = "strength-bar strength-medium";
+  else if (score === 4) bar.className = "strength-bar strength-strong";
+
+  resetBtn.disabled = !(score === 4);
+}
+
+pwd.addEventListener("input", updateStrength);
+pwd2.addEventListener("input", updateStrength);
+
+/* -------------------------------
+   RESET PASSWORD (SECURE)
+---------------------------------*/
+resetBtn.onclick = async () => {
+  const pass = pwd.value.trim();
+  const msg = document.getElementById("resetMessage");
+
+  const { error } = await supabase.auth.updateUser({ password: pass });
+
+  if (error) {
+    msg.textContent = error.message;
+    msg.className = "error-text";
+  } else {
+    msg.textContent = "Password updated! Redirecting…";
+    msg.className = "success-text";
+    setTimeout(() => window.location.href = "login.html", 2000);
+  }
+};
 </script>
 
 </body>
