@@ -89,7 +89,7 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
 }
 
 /* Generic form elements */
-.input-field, .textarea-field{
+.input-field, .textarea-field, select{
   width:100%;
   padding:8px;
   border:1px solid #ccc;
@@ -127,6 +127,14 @@ button.danger{
 button.small{
   font-size:13px;
   padding:6px 10px;
+}
+button.secondary{
+  background:#555;
+  color:#fff;
+  border:none;
+  padding:8px 14px;
+  border-radius:6px;
+  cursor:pointer;
 }
 
 /* Summary cards */
@@ -269,16 +277,18 @@ fetch("header.html?v=1")
               <label for="productPrice">Price (USD)</label>
               <input id="productPrice" class="input-field" type="number" step="0.01" min="0" required>
 
-              <!-- CATEGORY DROPDOWN -->
               <label for="productCategory">Category</label>
-              <select id="productCategory" class="input-field" required>
-                <option value="">Select Category</option>
+              <select id="productCategory" class="input-field">
+                <option value="">Select category</option>
+                <option value="Educational">Educational</option>
+                <option value="Creative Assets">Creative Assets</option>
+                <option value="Productivity">Productivity</option>
+                <option value="Templates">Templates</option>
               </select>
 
-              <!-- SUBCATEGORY DROPDOWN -->
               <label for="productSubcategory">Subcategory</label>
-              <select id="productSubcategory" class="input-field" disabled>
-                <option value="">Select Subcategory</option>
+              <select id="productSubcategory" class="input-field">
+                <option value="">Select subcategory</option>
               </select>
 
               <label for="externalLink">External Download Link (optional)</label>
@@ -390,6 +400,7 @@ fetch("header.html?v=1")
           <button class="primary" type="submit" style="margin-top:10px;">Save Settings</button>
           <p id="accountMessage"></p>
         </form>
+        <!-- ❌ No Delete Account section anymore -->
       </section>
     </section>
   </div>
@@ -408,8 +419,13 @@ fetch("footer.html?v=1")
 <script type="module">
 import { supabase } from "./js/supabase-config.js";
 
-/* ---- CATEGORY MAP (no emojis, matches database) ---- */
-const CATEGORY_MAP = {
+const welcomeLine = document.getElementById("welcomeLine");
+const logoutBtn = document.getElementById("logoutBtn");
+const navBtns = document.querySelectorAll(".nav-btn");
+const sectionIds = ["overview","products","upload","orders","summary","account"];
+
+/* Category → Subcategory map */
+const subcategoryMap = {
   "Educational": [
     "eBooks",
     "Online Courses",
@@ -444,11 +460,21 @@ const CATEGORY_MAP = {
   ]
 };
 
-const welcomeLine = document.getElementById("welcomeLine");
-const logoutBtn = document.getElementById("logoutBtn");
-const navBtns = document.querySelectorAll(".nav-btn");
+function populateSubcategories(selectedCategory, selectEl){
+  selectEl.innerHTML = "";
+  const defaultOpt = document.createElement("option");
+  defaultOpt.value = "";
+  defaultOpt.textContent = "Select subcategory";
+  selectEl.appendChild(defaultOpt);
 
-const sectionIds = ["overview","products","upload","orders","summary","account"];
+  const subs = subcategoryMap[selectedCategory] || [];
+  subs.forEach(sub=>{
+    const opt = document.createElement("option");
+    opt.value = sub;
+    opt.textContent = sub;
+    selectEl.appendChild(opt);
+  });
+}
 
 function formatMoneyFromCents(cents){
   if (typeof cents !== "number") return "USD 0.00";
@@ -475,42 +501,6 @@ navBtns.forEach(btn=>{
   });
 });
 
-/* Init category + subcategory dropdowns */
-function initCategoryDropdowns(){
-  const catSelect = document.getElementById("productCategory");
-  const subSelect = document.getElementById("productSubcategory");
-  if (!catSelect || !subSelect) return;
-
-  // Clear and add default
-  catSelect.innerHTML = '<option value="">Select Category</option>';
-  Object.keys(CATEGORY_MAP).forEach(cat=>{
-    const opt = document.createElement("option");
-    opt.value = cat;
-    opt.textContent = cat;
-    catSelect.appendChild(opt);
-  });
-
-  // When category changes, rebuild subcategory options
-  catSelect.addEventListener("change", ()=>{
-    const catValue = catSelect.value;
-    subSelect.innerHTML = '<option value="">Select Subcategory</option>';
-
-    if (!catValue || !CATEGORY_MAP[catValue]){
-      subSelect.disabled = true;
-      return;
-    }
-
-    CATEGORY_MAP[catValue].forEach(sub=>{
-      const opt = document.createElement("option");
-      opt.value = sub;
-      opt.textContent = sub;
-      subSelect.appendChild(opt);
-    });
-
-    subSelect.disabled = false;
-  });
-}
-
 /* MAIN: Check session */
 supabase.auth.getSession().then(async ({ data })=>{
   if (!data.session){
@@ -522,11 +512,10 @@ supabase.auth.getSession().then(async ({ data })=>{
   const md = user.user_metadata || {};
   const namePieces = [];
   if (md.first_name) namePieces.push(md.first_name);
-  if (md.last_name)  namePieces.push(md.last_name);
+  if (md.last_name) namePieces.push(md.last_name);
   const display = (namePieces.join(" ") || md.display_name || user.email || "Seller");
   welcomeLine.textContent = "Welcome, " + display;
 
-  initCategoryDropdowns();
   setupLogout();
   setupAccount(user);
   setupUpload(user);
@@ -545,25 +534,25 @@ function setupLogout(){
 /* Account Settings */
 function setupAccount(user){
   const md = user.user_metadata || {};
-  const accFirstName    = document.getElementById("accFirstName");
-  const accLastName     = document.getElementById("accLastName");
-  const accDisplayName  = document.getElementById("accDisplayName");
-  const accPaypalEmail  = document.getElementById("accPaypalEmail");
-  const accountForm     = document.getElementById("accountForm");
-  const accountMessage  = document.getElementById("accountMessage");
+  const accFirstName = document.getElementById("accFirstName");
+  const accLastName  = document.getElementById("accLastName");
+  const accDisplayName = document.getElementById("accDisplayName");
+  const accPaypalEmail = document.getElementById("accPaypalEmail");
+  const accountForm = document.getElementById("accountForm");
+  const accountMessage = document.getElementById("accountMessage");
 
-  accFirstName.value   = md.first_name    || "";
-  accLastName.value    = md.last_name     || "";
-  accDisplayName.value = md.display_name  || "";
-  accPaypalEmail.value = md.paypal_email  || "";
+  accFirstName.value = md.first_name || "";
+  accLastName.value  = md.last_name || "";
+  accDisplayName.value = md.display_name || "";
+  accPaypalEmail.value = md.paypal_email || "";
 
   accountForm.addEventListener("submit", async (e)=>{
     e.preventDefault();
     accountMessage.textContent = "";
     accountMessage.className = "";
 
-    const firstName   = accFirstName.value.trim();
-    const lastName    = accLastName.value.trim();
+    const firstName = accFirstName.value.trim();
+    const lastName  = accLastName.value.trim();
     const displayName = accDisplayName.value.trim();
     const paypalEmail = accPaypalEmail.value.trim();
 
@@ -593,7 +582,7 @@ function setupAccount(user){
 
     const namePieces = [];
     if (firstName) namePieces.push(firstName);
-    if (lastName)  namePieces.push(lastName);
+    if (lastName) namePieces.push(lastName);
     const display = (namePieces.join(" ") || displayName || user.email);
     welcomeLine.textContent = "Welcome, " + display;
 
@@ -606,21 +595,19 @@ function setupAccount(user){
 /* Enforce PayPal requirement for uploading */
 function checkUploadLock(paypalEmail){
   const lockNotice = document.getElementById("uploadLockMessage");
-  const uploadBtn  = document.getElementById("uploadBtn");
+  const uploadBtn = document.getElementById("uploadBtn");
   const uploadForm = document.getElementById("uploadForm");
-
-  if (!uploadForm || !uploadBtn) return;
 
   if (!paypalEmail){
     if (lockNotice) lockNotice.style.display = "block";
-    uploadBtn.disabled = true;
-    uploadForm.querySelectorAll("input,textarea,button,select").forEach(el=>{
+    if (uploadBtn) uploadBtn.disabled = true;
+    if (uploadForm) uploadForm.querySelectorAll("input,textarea,button,select").forEach(el=>{
       if (el.id !== "uploadBtn") el.disabled = true;
     });
   } else {
     if (lockNotice) lockNotice.style.display = "none";
-    uploadBtn.disabled = false;
-    uploadForm.querySelectorAll("input,textarea,button,select").forEach(el=>{
+    if (uploadBtn) uploadBtn.disabled = false;
+    if (uploadForm) uploadForm.querySelectorAll("input,textarea,button,select").forEach(el=>{
       el.disabled = false;
     });
   }
@@ -629,30 +616,35 @@ function checkUploadLock(paypalEmail){
 /* Upload Product */
 function setupUpload(user){
   const form = document.getElementById("uploadForm");
-  const msg  = document.getElementById("uploadMessage");
+  const msg = document.getElementById("uploadMessage");
 
-  if (!form) return;
+  // Category → subcategory dynamic behavior
+  const catSelect = document.getElementById("productCategory");
+  const subSelect = document.getElementById("productSubcategory");
+  catSelect.addEventListener("change", ()=>{
+    populateSubcategories(catSelect.value, subSelect);
+  });
 
   form.addEventListener("submit", async (e)=>{
     e.preventDefault();
     msg.textContent = "";
     msg.className = "";
 
-    const title       = document.getElementById("productTitle").value.trim();
-    const priceVal    = parseFloat(document.getElementById("productPrice").value);
+    const title = document.getElementById("productTitle").value.trim();
+    const priceVal = parseFloat(document.getElementById("productPrice").value);
     const description = document.getElementById("productDescription").value.trim();
-    const category    = document.getElementById("productCategory").value;
-    const subcategory = document.getElementById("productSubcategory").value;
-    const externalLink= document.getElementById("externalLink").value.trim();
+    const category = document.getElementById("productCategory").value.trim();
+    const subcategory = document.getElementById("productSubcategory").value.trim();
+    const externalLink = document.getElementById("externalLink").value.trim();
 
-    const fileInput     = document.getElementById("productFile");
+    const fileInput = document.getElementById("productFile");
     const mainImageFile = document.getElementById("image1").files[0] || null;
-    const image2File    = document.getElementById("image2").files[0] || null;
-    const image3File    = document.getElementById("image3").files[0] || null;
+    const image2File = document.getElementById("image2").files[0] || null;
+    const image3File = document.getElementById("image3").files[0] || null;
 
-    const couponCode       = document.getElementById("couponCode").value.trim();
+    const couponCode = document.getElementById("couponCode").value.trim();
     const couponPercentRaw = document.getElementById("couponPercent").value.trim();
-    const couponPercent    = couponPercentRaw ? parseInt(couponPercentRaw,10) : null;
+    const couponPercent = couponPercentRaw ? parseInt(couponPercentRaw,10) : null;
 
     if (!title){
       msg.textContent = "Title is required.";
@@ -665,12 +657,12 @@ function setupUpload(user){
       return;
     }
     if (!category){
-      msg.textContent = "Please select a category.";
+      msg.textContent = "Please choose a category.";
       msg.className = "error-text";
       return;
     }
     if (!subcategory){
-      msg.textContent = "Please select a subcategory.";
+      msg.textContent = "Please choose a subcategory.";
       msg.className = "error-text";
       return;
     }
@@ -681,8 +673,8 @@ function setupUpload(user){
     }
 
     const mainFile = fileInput.files[0] || null;
-    const MAX_FILE_BYTES = 10 * 1024 * 1024;
-    const MAX_IMG_BYTES  = 5  * 1024 * 1024;
+    const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10MB for now
+    const MAX_IMG_BYTES = 5 * 1024 * 1024;
 
     if (!mainFile && !externalLink){
       msg.textContent = "Upload a main file or provide an external download link.";
@@ -713,10 +705,10 @@ function setupUpload(user){
     msg.textContent = "Uploading product…";
     msg.className = "text-muted";
 
-    let downloadUrl  = externalLink || "";
+    let downloadUrl = externalLink || "";
     let mainImageUrl = null;
-    let image2Url    = null;
-    let image3Url    = null;
+    let image2Url = null;
+    let image3Url = null;
 
     try{
       async function uploadToBucket(path, file){
@@ -748,17 +740,17 @@ function setupUpload(user){
       }
 
       const { error:insertErr } = await supabase.from("products").insert({
-        seller_id:   user.id,
+        seller_id: user.id,
         title,
         description,
-        price:       priceVal,
-        category:    category,
-        subcategory: subcategory,
+        price: priceVal,
+        category,
+        subcategory,
         main_image_url: mainImageUrl,
-        image2_url:     image2Url,
-        image3_url:     image3Url,
-        download_url:   downloadUrl,
-        coupon_code:    couponCode || null,
+        image2_url: image2Url,
+        image3_url: image3Url,
+        download_url: downloadUrl,
+        coupon_code: couponCode || null,
         coupon_percent: couponPercent
       });
 
@@ -768,17 +760,16 @@ function setupUpload(user){
       msg.className = "success-text";
 
       form.reset();
-      initCategoryDropdowns(); // reset dropdowns after form reset
       loadMyProducts(user);
     } catch(err){
       console.error("Upload error:", err);
-      msg.textContent = "Error uploading product. Open Console (F12) to see details.";
+      msg.textContent = "Error uploading product.";
       msg.className = "error-text";
     }
   });
 }
 
-/* Load My Products */
+/* Load My Products (with Edit + Delete using API) */
 async function loadMyProducts(user){
   const tbody = document.getElementById("productsTbody");
   const empty = document.getElementById("productsEmpty");
@@ -845,22 +836,44 @@ async function loadMyProducts(user){
     }
 
     const actionsCell = document.createElement("td");
+
+    // Edit button
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "Edit";
+    editBtn.className = "secondary small";
+    editBtn.style.marginRight = "6px";
+    editBtn.addEventListener("click", ()=>{
+      window.location.href = "edit-product.html?id=" + p.id;
+    });
+    actionsCell.appendChild(editBtn);
+
+    // Delete button (goes through /api/delete-product → deletes DB row + files)
     const delBtn = document.createElement("button");
     delBtn.textContent = "Delete";
     delBtn.className = "danger small";
     delBtn.addEventListener("click", async ()=>{
-      const ok = window.confirm("Delete this product?");
+      const ok = window.confirm("Delete this product, including its files and images?");
       if (!ok) return;
-      const { error:delErr } = await supabase
-        .from("products")
-        .delete()
-        .eq("id", p.id)
-        .eq("seller_id", user.id);
-      if (delErr){
-        alert("Error deleting product.");
-        console.error(delErr);
-      } else {
-        loadMyProducts(user);
+
+      try{
+        const res = await fetch("/api/delete-product", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            product_id: p.id,
+            seller_id: user.id
+          })
+        });
+        const result = await res.json();
+        if (!res.ok || result.error){
+          alert("Error deleting product: " + (result.error || res.statusText));
+          console.error("Delete error:", result);
+        } else {
+          loadMyProducts(user);
+        }
+      } catch(e){
+        console.error("Delete request failed:", e);
+        alert("Failed to delete product (network error).");
       }
     });
     actionsCell.appendChild(delBtn);
@@ -878,9 +891,9 @@ async function loadMyProducts(user){
 
 /* Orders + Summary */
 async function loadOrdersAndSummary(user){
-  const tbody          = document.getElementById("ordersTbody");
-  const empty          = document.getElementById("ordersEmpty");
-  const summaryOrders  = document.getElementById("summaryOrders");
+  const tbody = document.getElementById("ordersTbody");
+  const empty = document.getElementById("ordersEmpty");
+  const summaryOrders = document.getElementById("summaryOrders");
   const summaryRevenue = document.getElementById("summaryRevenue");
 
   tbody.innerHTML = "";
@@ -917,12 +930,12 @@ async function loadOrdersAndSummary(user){
   }
 
   let totalOrders = 0;
-  let totalCents  = 0;
+  let totalCents = 0;
 
   data.forEach(o=>{
     const tr = document.createElement("tr");
-    const dateStr    = o.paid_at ? new Date(o.paid_at).toLocaleDateString() : "-";
-    const title      = productMap[o.product_id] || "(Unknown product)";
+    const dateStr = o.paid_at ? new Date(o.paid_at).toLocaleDateString() : "-";
+    const title = productMap[o.product_id] || "(Unknown product)";
     const amountText = formatMoneyFromCents(o.amount_cents);
 
     const dateCell = document.createElement("td");
@@ -950,7 +963,7 @@ async function loadOrdersAndSummary(user){
     }
   });
 
-  summaryOrders.textContent  = String(totalOrders);
+  summaryOrders.textContent = String(totalOrders);
   summaryRevenue.textContent = formatMoneyFromCents(totalCents);
 }
 </script>
