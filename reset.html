@@ -42,31 +42,40 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
 <script type="module">
 import { supabase } from "./js/supabase-config.js";
 
-/* -------------------------------
-   READ RESET TOKEN FROM URL
----------------------------------*/
 const url = new URL(window.location.href);
-const token = url.searchParams.get("token_hash");
+
+// Required params from email link
+const token_hash = url.searchParams.get("token_hash");
 const type = url.searchParams.get("type");
 
-if (!token || type !== "recovery") {
-  document.getElementById("resetMessage").textContent =
-    "Invalid or expired reset link.";
-  document.getElementById("resetMessage").className = "error-text";
-  document.getElementById("resetBtn").style.display = "none";
-}
-
-/* -------------------------------
-   PASSWORD STRENGTH CHECK
----------------------------------*/
 const pwd = document.getElementById("newPassword");
 const pwd2 = document.getElementById("confirmPassword");
 const bar = document.getElementById("strengthBar");
+const msg = document.getElementById("resetMessage");
 const resetBtn = document.getElementById("resetBtn");
 
+/* 🔒 1) Validate link */
+if (!token_hash || type !== "recovery") {
+  msg.textContent = "Invalid or expired reset link.";
+  msg.className = "error-text";
+  resetBtn.style.display = "none";
+  throw new Error("Invalid reset link");
+}
+
+/* 🔑 2) MUST exchange recovery token for a session */
+const { error: sessionError } = await supabase.auth.exchangeCodeForSession(window.location.href);
+
+if (sessionError) {
+  msg.textContent = "Invalid or expired recovery session.";
+  msg.className = "error-text";
+  resetBtn.style.display = "none";
+  throw sessionError;
+}
+
+/* 🔐 3) Password strength check */
 function updateStrength() {
-  const pass = pwd.value;
-  const confirm = pwd2.value;
+  const pass = pwd.value.trim();
+  const confirm = pwd2.value.trim();
 
   let score = 0;
   if (pass.length >= 8) score++;
@@ -74,25 +83,23 @@ function updateStrength() {
   if (/[!@#$%^&*(),.?":{}|<>]/.test(pass)) score++;
   if (pass === confirm && pass.length > 0) score++;
 
-  if (pass.length === 0) bar.className = "strength-bar";
-  else if (score <= 1) bar.className = "strength-bar strength-weak";
-  else if (score === 2 || score === 3) bar.className = "strength-bar strength-medium";
+  if (score <= 1) bar.className = "strength-bar strength-weak";
+  else if (score <= 3) bar.className = "strength-bar strength-medium";
   else if (score === 4) bar.className = "strength-bar strength-strong";
 
-  resetBtn.disabled = !(score === 4);
+  resetBtn.disabled = score !== 4;
 }
 
 pwd.addEventListener("input", updateStrength);
 pwd2.addEventListener("input", updateStrength);
 
-/* -------------------------------
-   RESET PASSWORD (SECURE)
----------------------------------*/
+/* 🔐 4) UPDATE PASSWORD */
 resetBtn.onclick = async () => {
   const pass = pwd.value.trim();
-  const msg = document.getElementById("resetMessage");
 
-  const { error } = await supabase.auth.updateUser({ password: pass });
+  const { error } = await supabase.auth.updateUser({
+    password: pass
+  });
 
   if (error) {
     msg.textContent = error.message;
@@ -104,6 +111,7 @@ resetBtn.onclick = async () => {
   }
 };
 </script>
+
 
 </body>
 </html>
