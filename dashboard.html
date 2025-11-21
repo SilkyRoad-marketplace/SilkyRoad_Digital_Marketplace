@@ -89,7 +89,7 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
 }
 
 /* Generic form elements */
-.input-field, .textarea-field, .select-field{
+.input-field, .textarea-field{
   width:100%;
   padding:8px;
   border:1px solid #ccc;
@@ -418,7 +418,6 @@ const navBtns = document.querySelectorAll(".nav-btn");
 
 const sectionIds = ["overview","products","upload","orders","summary","account"];
 
-/* Helper */
 function formatMoneyFromCents(cents){
   if (typeof cents !== "number") return "USD 0.00";
   return "USD " + (cents / 100).toFixed(2);
@@ -452,7 +451,6 @@ supabase.auth.getSession().then(async ({ data })=>{
   }
   const user = data.session.user;
 
-  // Prefill welcome line
   const md = user.user_metadata || {};
   const namePieces = [];
   if (md.first_name) namePieces.push(md.first_name);
@@ -524,18 +522,15 @@ function setupAccount(user){
     accountMessage.textContent = "Settings updated.";
     accountMessage.className = "success-text";
 
-    // Update welcome line
     const namePieces = [];
     if (firstName) namePieces.push(firstName);
     if (lastName) namePieces.push(lastName);
     const display = (namePieces.join(" ") || displayName || user.email);
     welcomeLine.textContent = "Welcome, " + display;
 
-    // Re-check upload lock
     checkUploadLock(paypalEmail);
   });
 
-  // Delete account button
   const deleteBtn = document.getElementById("deleteAccountBtn");
   const deleteMsg = document.getElementById("deleteAccountMessage");
   deleteBtn.addEventListener("click", async ()=>{
@@ -546,22 +541,18 @@ function setupAccount(user){
     deleteMsg.className = "text-muted";
 
     try{
-      // Delete products
       const { error:prodErr } = await supabase
         .from("products")
         .delete()
         .eq("seller_id", user.id);
       if (prodErr) throw prodErr;
 
-      // Delete orders as seller (optional)
       const { error:ordErr } = await supabase
         .from("orders")
         .delete()
         .eq("seller_id", user.id);
       if (ordErr) throw ordErr;
 
-      // NOTE: Client-side cannot delete the auth user itself.
-      // Full account deletion must be done server-side (admin / edge function).
       await supabase.auth.signOut();
 
       deleteMsg.textContent = "Your marketplace data has been removed and you have been logged out. For complete account deletion, contact the site owner.";
@@ -574,7 +565,6 @@ function setupAccount(user){
     }
   });
 
-  // initial upload lock state
   checkUploadLock(md.paypal_email || "");
 }
 
@@ -642,8 +632,8 @@ function setupUpload(user){
     }
 
     const mainFile = fileInput.files[0] || null;
-    const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10 MB
-    const MAX_IMG_BYTES = 5 * 1024 * 1024;   // 5 MB
+    const MAX_FILE_BYTES = 10 * 1024 * 1024;
+    const MAX_IMG_BYTES = 5 * 1024 * 1024;
 
     if (!mainFile && !externalLink){
       msg.textContent = "Upload a main file or provide an external download link.";
@@ -680,7 +670,6 @@ function setupUpload(user){
     let image3Url = null;
 
     try{
-      // helper: upload to seller-uploads bucket
       async function uploadToBucket(path, file){
         const { error } = await supabase.storage.from("seller-uploads").upload(path, file);
         if (error) throw error;
@@ -690,13 +679,11 @@ function setupUpload(user){
 
       const now = Date.now();
 
-      // upload main file if present
       if (mainFile){
         const filePath = `${user.id}/files/${now}_${mainFile.name}`;
         downloadUrl = await uploadToBucket(filePath, mainFile);
       }
 
-      // upload main image
       if (mainImageFile){
         const imgPath = `${user.id}/images/${now}_main_${mainImageFile.name}`;
         mainImageUrl = await uploadToBucket(imgPath, mainImageFile);
@@ -711,7 +698,6 @@ function setupUpload(user){
         image3Url = await uploadToBucket(imgPath3, image3File);
       }
 
-      // Insert product row
       const { error:insertErr } = await supabase.from("products").insert({
         seller_id: user.id,
         title,
@@ -868,7 +854,6 @@ async function loadOrdersAndSummary(user){
     return;
   }
 
-  // Fetch product titles
   const productIds = [...new Set(data.map(o=>o.product_id).filter(Boolean))];
   let productMap = {};
   if (productIds.length > 0){
