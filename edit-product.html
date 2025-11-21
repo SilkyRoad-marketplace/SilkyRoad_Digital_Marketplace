@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="/favicon.png">
+<link rel="stylesheet" href="styles.css">
+<title>Edit Product – Silky Road</title>
+
+<style>
+body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f9;color:#222}
+.container{max-width:900px;margin:0 auto;padding:16px}
+.banner{
+  position:relative;
+  width:100%;
+  margin:0;
+  padding:0;
+}
+.banner img{
+  width:100%;
+  height:auto;
+  display:block;
+  max-height:320px;
+  object-fit:cover;
+}
+.card{
+  background:#fff;
+  padding:20px;
+  border:1px solid #e6e6ea;
+  border-radius:8px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05);
+  margin-top:20px;
+}
+.input-field, .textarea-field, select{
+  width:100%;
+  padding:8px;
+  border:1px solid #ccc;
+  border-radius:6px;
+  margin-bottom:10px;
+  font-size:14px;
+  box-sizing:border-box;
+}
+.textarea-field{min-height:80px;resize:vertical;}
+label{
+  font-size:13px;
+  font-weight:bold;
+  display:block;
+  margin-top:4px;
+  margin-bottom:4px;
+}
+button.primary{
+  background:#2b6ef6;
+  color:#fff;
+  border:none;
+  padding:10px 16px;
+  border-radius:6px;
+  cursor:pointer;
+}
+button.secondary{
+  background:#555;
+  color:#fff;
+  border:none;
+  padding:8px 14px;
+  border-radius:6px;
+  cursor:pointer;
+}
+.text-muted{color:#777;font-size:13px;}
+.error-text{color:#d00;font-size:13px;}
+.success-text{color:#089600;font-size:13px;}
+.upload-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+@media(max-width:800px){
+  .upload-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header"></div>
+<script>
+fetch("header.html?v=1")
+  .then(r=>r.text())
+  .then(d=>document.getElementById("header").innerHTML=d)
+  .catch(e=>console.error("Header load failed:",e));
+</script>
+
+<!-- BANNER -->
+<div class="banner">
+  <img src="banner.jpg" alt="Silky Road Banner">
+</div>
+
+<main class="container">
+  <button onclick="window.location.href='dashboard.html'" class="secondary" style="margin-top:16px;">← Back to Dashboard</button>
+
+  <div class="card">
+    <h1 id="editTitleHeading">Edit Product</h1>
+    <p id="editHelper" class="text-muted">Loading product details…</p>
+
+    <form id="editForm" style="display:none;">
+      <div class="upload-grid">
+        <div>
+          <label for="editTitle">Title</label>
+          <input id="editTitle" class="input-field" type="text">
+
+          <label for="editPrice">Price (USD)</label>
+          <input id="editPrice" class="input-field" type="number" step="0.01" min="0">
+
+          <label for="editCategory">Category</label>
+          <select id="editCategory" class="input-field">
+            <option value="">Select category</option>
+            <option value="Educational">Educational</option>
+            <option value="Creative Assets">Creative Assets</option>
+            <option value="Productivity">Productivity</option>
+            <option value="Templates">Templates</option>
+          </select>
+
+          <label for="editSubcategory">Subcategory</label>
+          <select id="editSubcategory" class="input-field">
+            <option value="">Select subcategory</option>
+          </select>
+
+          <label for="editExternalLink">External Download Link (optional)</label>
+          <input id="editExternalLink" class="input-field" type="text" placeholder="https://...">
+        </div>
+
+        <div>
+          <label for="editDescription">Description</label>
+          <textarea id="editDescription" class="textarea-field"></textarea>
+
+          <p class="text-muted" style="margin-top:4px;">
+            If you don't upload a new main file or images, the existing ones will remain.
+          </p>
+
+          <label for="editMainFile">Replace Main Product File (optional, max 10 MB)</label>
+          <input id="editMainFile" class="input-field" type="file" accept=".zip,.pdf,.mp3,.mp4,.doc,.ppt,.xls,.txt,.epub">
+        </div>
+      </div>
+
+      <h3 style="margin-top:16px;">Product Images</h3>
+      <div class="upload-grid">
+        <div>
+          <p class="text-muted" id="currentImg1"></p>
+          <label for="editImage1">Replace Main Product Image (optional)</label>
+          <input id="editImage1" class="input-field" type="file" accept="image/jpeg,image/png,image/gif">
+        </div>
+        <div>
+          <p class="text-muted" id="currentImg2"></p>
+          <label for="editImage2">Replace Image 2 (optional)</label>
+          <input id="editImage2" class="input-field" type="file" accept="image/jpeg,image/png,image/gif">
+        </div>
+        <div>
+          <p class="text-muted" id="currentImg3"></p>
+          <label for="editImage3">Replace Image 3 (optional)</label>
+          <input id="editImage3" class="input-field" type="file" accept="image/jpeg,image/png,image/gif">
+        </div>
+      </div>
+
+      <h3 style="margin-top:16px;">Coupon</h3>
+      <div class="upload-grid">
+        <div>
+          <label for="editCouponCode">Coupon Code (optional)</label>
+          <input id="editCouponCode" class="input-field" type="text">
+        </div>
+        <div>
+          <label for="editCouponPercent">Discount % (optional)</label>
+          <input id="editCouponPercent" class="input-field" type="number" min="1" max="90">
+        </div>
+      </div>
+
+      <button class="primary" type="submit" style="margin-top:16px;">Save Changes</button>
+      <p id="editMessage" style="margin-top:8px;"></p>
+    </form>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer"></footer>
+<script>
+fetch("footer.html?v=1")
+  .then(r=>r.text())
+  .then(d=>document.querySelector(".footer").innerHTML=d)
+  .catch(e=>console.error("Footer load failed:",e));
+</script>
+
+<script type="module">
+import { supabase } from "./js/supabase-config.js";
+
+const subcategoryMap = {
+  "Educational": [
+    "eBooks",
+    "Online Courses",
+    "Worksheets",
+    "Tutorials",
+    "Digital Workbooks"
+  ],
+  "Creative Assets": [
+    "Stock Photos",
+    "Videos",
+    "Music / Audio Tracks",
+    "Sound Effects",
+    "Digital Art",
+    "Fonts",
+    "Brushes",
+    "Lightroom Presets"
+  ],
+  "Productivity": [
+    "Planners",
+    "Journals",
+    "Social Media Packs",
+    "Business Templates",
+    "Spreadsheets",
+    "Notion Templates"
+  ],
+  "Templates": [
+    "Canva Templates",
+    "Digital Stickers",
+    "Printable Games",
+    "Craft Patterns",
+    "Email Templates"
+  ]
+};
+
+function populateSubcategories(selectedCategory, selectEl){
+  selectEl.innerHTML = "";
+  const defaultOpt = document.createElement("option");
+  defaultOpt.value = "";
+  defaultOpt.textContent = "Select subcategory";
+  selectEl.appendChild(defaultOpt);
+
+  const subs = subcategoryMap[selectedCategory] || [];
+  subs.forEach(sub=>{
+    const opt = document.createElement("option");
+    opt.value = sub;
+    opt.textContent = sub;
+    selectEl.appendChild(opt);
+  });
+}
+
+const urlParams = new URLSearchParams(window.location.search);
+const productId = urlParams.get("id");
+
+const editHelper = document.getElementById("editHelper");
+const editForm = document.getElementById("editForm");
+const editTitleHeading = document.getElementById("editTitleHeading");
+const editMessage = document.getElementById("editMessage");
+
+const editTitle = document.getElementById("editTitle");
+const editPrice = document.getElementById("editPrice");
+const editCategory = document.getElementById("editCategory");
+const editSubcategory = document.getElementById("editSubcategory");
+const editDescription = document.getElementById("editDescription");
+const editExternalLink = document.getElementById("editExternalLink");
+
+const editMainFile = document.getElementById("editMainFile");
+const editImage1 = document.getElementById("editImage1");
+const editImage2 = document.getElementById("editImage2");
+const editImage3 = document.getElementById("editImage3");
+
+const currentImg1 = document.getElementById("currentImg1");
+const currentImg2 = document.getElementById("currentImg2");
+const currentImg3 = document.getElementById("currentImg3");
+
+const editCouponCode = document.getElementById("editCouponCode");
+const editCouponPercent = document.getElementById("editCouponPercent");
+
+let currentProduct = null;
+let currentUser = null;
+
+if (!productId){
+  editHelper.textContent = "Missing product ID.";
+} else {
+  init();
+}
+
+async function init(){
+  const { data: sessionData } = await supabase.auth.getSession();
+  if (!sessionData || !sessionData.session){
+    window.location.href = "login.html";
+    return;
+  }
+  currentUser = sessionData.session.user;
+
+  const { data: product, error } = await supabase
+    .from("products")
+    .select("*")
+    .eq("id", productId)
+    .single();
+
+  if (error || !product){
+    console.error(error);
+    editHelper.textContent = "Product not found.";
+    return;
+  }
+
+  if (product.seller_id !== currentUser.id){
+    editHelper.textContent = "You do not have permission to edit this product.";
+    return;
+  }
+
+  currentProduct = product;
+  fillForm(product);
+}
+
+function fillForm(p){
+  editTitleHeading.textContent = "Edit Product – " + (p.title || "Untitled");
+  editHelper.textContent = "";
+  editForm.style.display = "block";
+
+  editTitle.value = p.title || "";
+  editPrice.value = (typeof p.price === "number") ? p.price.toFixed(2) : "";
+
+  editCategory.value = p.category || "";
+  populateSubcategories(editCategory.value, editSubcategory);
+  if (p.subcategory){
+    editSubcategory.value = p.subcategory;
+  }
+
+  editDescription.value = p.description || "";
+
+  // Only show external link if it's not from seller-uploads bucket
+  let ext = "";
+  if (p.download_url && p.download_url.indexOf("seller-uploads") === -1){
+    ext = p.download_url;
+  }
+  editExternalLink.value = ext;
+
+  currentImg1.textContent = p.main_image_url ? "Current main image set." : "No main image.";
+  currentImg2.textContent = p.image2_url ? "Current image 2 set." : "No image 2.";
+  currentImg3.textContent = p.image3_url ? "Current image 3 set." : "No image 3.";
+
+  editCouponCode.value = p.coupon_code || "";
+  editCouponPercent.value = (p.coupon_percent != null) ? p.coupon_percent : "";
+}
+
+/* Category change → update subcategories */
+editCategory.addEventListener("change", ()=>{
+  populateSubcategories(editCategory.value, editSubcategory);
+});
+
+/* Save changes */
+editForm.addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  editMessage.textContent = "";
+  editMessage.className = "";
+
+  if (!currentProduct || !currentUser){
+    editMessage.textContent = "Missing product or user.";
+    editMessage.className = "error-text";
+    return;
+  }
+
+  const title = editTitle.value.trim();
+  const priceVal = parseFloat(editPrice.value);
+  const category = editCategory.value.trim();
+  const subcategory = editSubcategory.value.trim();
+  const description = editDescription.value.trim();
+  const externalLink = editExternalLink.value.trim();
+
+  const mainFile = editMainFile.files[0] || null;
+  const img1File = editImage1.files[0] || null;
+  const img2File = editImage2.files[0] || null;
+  const img3File = editImage3.files[0] || null;
+
+  const couponCode = editCouponCode.value.trim();
+  const couponPercentRaw = editCouponPercent.value.trim();
+  const couponPercent = couponPercentRaw ? parseInt(couponPercentRaw,10) : null;
+
+  if (!title){
+    editMessage.textContent = "Title is required.";
+    editMessage.className = "error-text";
+    return;
+  }
+  if (isNaN(priceVal) || priceVal < 0){
+    editMessage.textContent = "Price must be a valid number.";
+    editMessage.className = "error-text";
+    return;
+  }
+  if (!category){
+    editMessage.textContent = "Category is required.";
+    editMessage.className = "error-text";
+    return;
+  }
+  if (!subcategory){
+    editMessage.textContent = "Subcategory is required.";
+    editMessage.className = "error-text";
+    return;
+  }
+
+  if (couponPercent !== null && (isNaN(couponPercent) || couponPercent < 1 || couponPercent > 90)){
+    editMessage.textContent = "Coupon % must be between 1 and 90, or leave empty.";
+    editMessage.className = "error-text";
+    return;
+  }
+
+  const MAX_FILE_BYTES = 10 * 1024 * 1024;
+  const MAX_IMG_BYTES = 5 * 1024 * 1024;
+
+  if (mainFile && mainFile.size > MAX_FILE_BYTES){
+    editMessage.textContent = "New main file exceeds 10 MB.";
+    editMessage.className = "error-text";
+    return;
+  }
+
+  for (const f of [img1File, img2File, img3File]){
+    if (f && f.size > MAX_IMG_BYTES){
+      editMessage.textContent = "One of the new images exceeds 5 MB.";
+      editMessage.className = "error-text";
+      return;
+    }
+  }
+
+  editMessage.textContent = "Saving changes…";
+  editMessage.className = "text-muted";
+
+  let downloadUrl = currentProduct.download_url || "";
+  let mainImageUrl = currentProduct.main_image_url || null;
+  let image2Url = currentProduct.image2_url || null;
+  let image3Url = currentProduct.image3_url || null;
+
+  try{
+    async function uploadToBucket(path, file){
+      const { error } = await supabase.storage.from("seller-uploads").upload(path, file);
+      if (error) throw error;
+      const { data } = supabase.storage.from("seller-uploads").getPublicUrl(path);
+      return data.publicUrl;
+    }
+
+    const now = Date.now();
+
+    if (mainFile){
+      const filePath = `${currentUser.id}/files/${now}_edit_${mainFile.name}`;
+      downloadUrl = await uploadToBucket(filePath, mainFile);
+    }
+
+    if (img1File){
+      const path1 = `${currentUser.id}/images/${now}_edit_main_${img1File.name}`;
+      mainImageUrl = await uploadToBucket(path1, img1File);
+    }
+    if (img2File){
+      const path2 = `${currentUser.id}/images/${now}_edit_img2_${img2File.name}`;
+      image2Url = await uploadToBucket(path2, img2File);
+    }
+    if (img3File){
+      const path3 = `${currentUser.id}/images/${now}_edit_img3_${img3File.name}`;
+      image3Url = await uploadToBucket(path3, img3File);
+    }
+
+    // If user typed an external link AND did not upload a new main file,
+    // we prefer the external link.
+    if (externalLink && !mainFile){
+      downloadUrl = externalLink;
+    }
+
+    const { error:updateErr } = await supabase
+      .from("products")
+      .update({
+        title,
+        price: priceVal,
+        category,
+        subcategory,
+        description,
+        download_url: downloadUrl,
+        main_image_url: mainImageUrl,
+        image2_url: image2Url,
+        image3_url: image3Url,
+        coupon_code: couponCode || null,
+        coupon_percent: couponPercent
+      })
+      .eq("id", currentProduct.id)
+      .eq("seller_id", currentUser.id);
+
+    if (updateErr) throw updateErr;
+
+    editMessage.textContent = "Product updated successfully.";
+    editMessage.className = "success-text";
+  } catch(err){
+    console.error("Edit save error:", err);
+    editMessage.textContent = "Error saving product changes.";
+    editMessage.className = "error-text";
+  }
+});
+</script>
+
+</body>
+</html>
