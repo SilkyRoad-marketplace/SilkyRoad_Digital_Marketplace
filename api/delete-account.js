@@ -1,3 +1,7 @@
+export const config = {
+  runtime: "edge"
+};
+
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 export default async function handler(req) {
@@ -27,19 +31,18 @@ export default async function handler(req) {
     );
   }
 
-  // Create Supabase Admin client
   const supabase = createClient(
     process.env.SUPABASE_URL,
     process.env.SUPABASE_SERVICE_ROLE_KEY
   );
 
-  // 1) Delete all products
+  // 1) Delete products
   await supabase.from("products").delete().eq("seller_id", user_id);
 
-  // 2) Delete all orders
+  // 2) Delete orders
   await supabase.from("orders").delete().eq("seller_id", user_id);
 
-  // 3) Delete storage folder
+  // 3) Delete uploaded files
   const { data: files } = await supabase.storage
     .from("seller-uploads")
     .list(`${user_id}/`);
@@ -50,12 +53,12 @@ export default async function handler(req) {
       .remove(files.map(f => `${user_id}/${f.name}`));
   }
 
-  // Delete folder itself
+  // Delete the empty folder
   await supabase.storage
     .from("seller-uploads")
     .remove([`${user_id}/`]);
 
-  // 4) Delete Supabase Auth user
+  // 4) Delete the auth user
   const { error: deleteError } =
     await supabase.auth.admin.deleteUser(user_id);
 
