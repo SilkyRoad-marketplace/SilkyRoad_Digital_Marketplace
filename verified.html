@@ -1,34 +1,106 @@
 <!doctype html>
 <html lang="en">
 <head>
-<link rel="stylesheet" href="styles.css">  
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="/favicon.png">
-<title>Email Verified – Silky Road</title>
+<link rel="stylesheet" href="styles.css">
+<title>Email Verified – Silky Road Marketplace</title>
 
 <style>
-body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f9;color:#222}
-.container{max-width:600px;margin:60px auto;text-align:center;padding:20px;background:#fff;border:1px solid #ddd;border-radius:10px}
-h1{color:#2b6ef6}
-button{
-  background:#2b6ef6;color:#fff;border:none;padding:12px 20px;
-  border-radius:6px;cursor:pointer;margin-top:20px;font-size:16px
+body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f9;color:#222;}
+.container{max-width:700px;margin:40px auto;text-align:center;background:#fff;
+  padding:30px;border-radius:10px;border:1px solid #e6e6ea;box-shadow:0 2px 6px rgba(0,0,0,0.05);}
+
+/* Banner match index */
+.banner{
+  position:relative;
+  width:100%;
+  margin:0;
+  padding:0;
+}
+.banner img{
+  width:100%;
+  height:auto;
+  display:block;
+  max-height:420px;
+  object-fit:cover;
+}
+
+.big-check{
+  font-size:70px;
+  color:#2ecc71;
+  margin-bottom:10px;
+}
+
+.btn-blue{
+  background:#2b6ef6;
+  color:#fff;
+  padding:12px 20px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:18px;
+  font-weight:bold;
+}
+
+.redirect-msg{
+  font-size:16px;
+  margin-top:15px;
+  color:#555;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-  <h1>🎉 Email Verified</h1>
-  <p>Your email has been successfully verified.</p>
-  <p>You can now log in to your seller dashboard.</p>
+<!-- HEADER -->
+<div id="header"></div>
+<script>
+fetch("header.html?v=1")
+  .then(r=>r.text())
+  .then(d=>document.getElementById("header").innerHTML=d);
+</script>
 
-  <button onclick="window.location.href='dashboard.html'">
+<!-- BANNER -->
+<div class="banner">
+  <img src="banner.jpg" alt="Silky Road Banner">
+</div>
+
+<!-- MAIN -->
+<div class="container">
+
+  <div class="big-check">✔</div>
+
+  <h1>Email Verified Successfully!</h1>
+
+  <p style="font-size:18px;line-height:1.6;margin-top:10px;">
+    Your account has been verified.  
+    You can now access the Silky Road Seller Dashboard.
+  </p>
+
+  <button class="btn-blue" onclick="window.location.href='dashboard.html'">
     Go to Dashboard
   </button>
+
+  <p class="redirect-msg">Redirecting automatically in 3 seconds…</p>
+
 </div>
+
+<!-- FOOTER -->
+<footer class="footer"></footer>
+<script>
+fetch("footer.html?v=1")
+  .then(r=>r.text())
+  .then(d=>document.querySelector(".footer").innerHTML=d);
+</script>
+
+<script>
+// Auto redirect in 3 seconds
+setTimeout(()=>{
+  window.location.href = "dashboard.html";
+}, 3000);
+</script>
 
 </body>
 </html>
