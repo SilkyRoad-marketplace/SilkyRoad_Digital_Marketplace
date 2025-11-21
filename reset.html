@@ -2,24 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="/favicon.png">
+<title>Reset Password – Silky Road</title>
 <link rel="stylesheet" href="styles.css">
-<title>Reset Password – Silky Road Marketplace</title>
 
 <style>
-body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f9;color:#222}
-.container{max-width:500px;margin:40px auto;padding:20px;background:#fff;border-radius:8px;
-  border:1px solid #e6e6ea;box-shadow:0 2px 6px rgba(0,0,0,0.05);}
-.input-field{width:100%;padding:12px;border:1px solid #ccc;border-radius:6px;margin-bottom:12px;}
-.btn-blue{width:100%;padding:12px;background:#2b6ef6;color:#fff;border:none;border-radius:6px;
-  font-size:16px;font-weight:bold;cursor:pointer;}
-.error-text{color:#d00;font-size:14px;}
-.success-text{color:#089600;font-size:14px;}
-.strength-bar{height:8px;border-radius:4px;background:#ddd;margin:-6px 0 10px 0;}
-.strength-weak{background:#ff4d4d;}
-.strength-medium{background:#ff9900;}
-.strength-strong{background:#2ecc71;}
+body{font-family:Arial,Helvetica,sans-serif;background:#f7f7f9;padding:0;margin:0}
+.container{max-width:500px;margin:80px auto;background:#fff;padding:20px;border:1px solid #ddd;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.05);}
+.input-field{width:100%;padding:12px;font-size:16px;margin-bottom:12px;border-radius:6px;border:1px solid #ccc;}
+.btn-blue{width:100%;padding:12px;background:#2b6ef6;color:#fff;border:none;border-radius:6px;font-size:16px;cursor:pointer;}
+.error-text{color:#d00;}
+.success-text{color:#089600;}
 </style>
 </head>
 
@@ -29,89 +23,54 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
   <h2>Reset Your Password</h2>
   <p>Enter your new password below.</p>
 
-  <input id="newPassword" class="input-field" type="password" placeholder="New Password">
-  <input id="confirmPassword" class="input-field" type="password" placeholder="Confirm Password">
-
-  <div id="strengthBar" class="strength-bar"></div>
+  <input id="newPass" class="input-field" type="password" placeholder="New password">
+  <input id="confirmPass" class="input-field" type="password" placeholder="Confirm password">
+  
+  <button id="resetBtn" class="btn-blue">Update Password</button>
 
   <p id="resetMessage"></p>
-
-  <button id="resetBtn" class="btn-blue" disabled>Reset Password</button>
 </div>
 
 <script type="module">
 import { supabase } from "./js/supabase-config.js";
 
-const url = new URL(window.location.href);
+const hash = window.location.hash;
+const params = new URLSearchParams(hash.substring(1));
+const type = params.get("type");
 
-// Required params from email link
-const token_hash = url.searchParams.get("token_hash");
-const type = url.searchParams.get("type");
-
-const pwd = document.getElementById("newPassword");
-const pwd2 = document.getElementById("confirmPassword");
-const bar = document.getElementById("strengthBar");
-const msg = document.getElementById("resetMessage");
 const resetBtn = document.getElementById("resetBtn");
+const msg = document.getElementById("resetMessage");
 
-/* 🔒 1) Validate link */
-if (!token_hash || type !== "recovery") {
+/* Must detect recovery type */
+if (type !== "recovery") {
   msg.textContent = "Invalid or expired reset link.";
   msg.className = "error-text";
-  resetBtn.style.display = "none";
-  throw new Error("Invalid reset link");
 }
 
-/* 🔑 2) MUST exchange recovery token for a session */
-const { error: sessionError } = await supabase.auth.exchangeCodeForSession(window.location.href);
+/* SUBMIT NEW PASSWORD */
+resetBtn.onclick = async ()=>{
 
-if (sessionError) {
-  msg.textContent = "Invalid or expired recovery session.";
-  msg.className = "error-text";
-  resetBtn.style.display = "none";
-  throw sessionError;
-}
+  const p1 = newPass.value.trim();
+  const p2 = confirmPass.value.trim();
 
-/* 🔐 3) Password strength check */
-function updateStrength() {
-  const pass = pwd.value.trim();
-  const confirm = pwd2.value.trim();
+  if (p1 !== p2){
+    msg.textContent = "Passwords do not match.";
+    msg.className = "error-text";
+    return;
+  }
 
-  let score = 0;
-  if (pass.length >= 8) score++;
-  if (/[0-9]/.test(pass)) score++;
-  if (/[!@#$%^&*(),.?":{}|<>]/.test(pass)) score++;
-  if (pass === confirm && pass.length > 0) score++;
+  const { error } = await supabase.auth.updateUser({ password: p1 });
 
-  if (score <= 1) bar.className = "strength-bar strength-weak";
-  else if (score <= 3) bar.className = "strength-bar strength-medium";
-  else if (score === 4) bar.className = "strength-bar strength-strong";
-
-  resetBtn.disabled = score !== 4;
-}
-
-pwd.addEventListener("input", updateStrength);
-pwd2.addEventListener("input", updateStrength);
-
-/* 🔐 4) UPDATE PASSWORD */
-resetBtn.onclick = async () => {
-  const pass = pwd.value.trim();
-
-  const { error } = await supabase.auth.updateUser({
-    password: pass
-  });
-
-  if (error) {
+  if (error){
     msg.textContent = error.message;
     msg.className = "error-text";
   } else {
-    msg.textContent = "Password updated! Redirecting…";
+    msg.textContent = "Password updated! Redirecting...";
     msg.className = "success-text";
-    setTimeout(() => window.location.href = "login.html", 2000);
+    setTimeout(()=>window.location.href="login.html", 1800);
   }
 };
 </script>
-
 
 </body>
 </html>
