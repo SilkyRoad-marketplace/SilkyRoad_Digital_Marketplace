@@ -555,7 +555,7 @@ function setupAccount(user){
     }
 
     // Call Vercel backend API route
-    const res = await fetch("/api/delete-account", {
+    const res = await fetch("/api/delete-account.js", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: currentUser.id })
