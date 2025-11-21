@@ -374,10 +374,10 @@ fetch("header.html?v=1")
             </div>
             <div>
               <label for="accDisplayName">Display Name</label>
-              <input id="accDisplayName" class="input-field" type="text" placeholder="e.g. Andy Fisherman">
+              <input id="accDisplayName" class="input-field" type="text" placeholder="e.g. John Emerson">
 
               <label for="accPaypalEmail">PayPal Email (required to receive payments)</label>
-              <input id="accPaypalEmail" class="input-field" type="email" placeholder="your-paypal@example.com">
+              <input id="accPaypalEmail" class="input-field" type="email" placeholder="your paypal email address">
             </div>
           </div>
 
@@ -531,38 +531,48 @@ function setupAccount(user){
     checkUploadLock(paypalEmail);
   });
 
+  /* DELETE ACCOUNT — secure backend API version */
   const deleteBtn = document.getElementById("deleteAccountBtn");
   const deleteMsg = document.getElementById("deleteAccountMessage");
-  deleteBtn.addEventListener("click", async ()=>{
-    const confirmed = window.confirm("You'll lose all of your uploaded data. Are you sure you want to delete your account?");
+
+  deleteBtn.addEventListener("click", async () => {
+    const confirmed = window.confirm(
+      "You will lose ALL of your products, images, files, orders, and account data.\n\nThis action cannot be undone.\n\nProceed?"
+    );
     if (!confirmed) return;
 
-    deleteMsg.textContent = "Deleting your products and orders…";
+    deleteMsg.textContent = "Deleting your account…";
     deleteMsg.className = "text-muted";
 
-    try{
-      const { error:prodErr } = await supabase
-        .from("products")
-        .delete()
-        .eq("seller_id", user.id);
-      if (prodErr) throw prodErr;
+    // Get current user
+    const { data } = await supabase.auth.getUser();
+    const currentUser = data?.user;
 
-      const { error:ordErr } = await supabase
-        .from("orders")
-        .delete()
-        .eq("seller_id", user.id);
-      if (ordErr) throw ordErr;
-
-      await supabase.auth.signOut();
-
-      deleteMsg.textContent = "Your marketplace data has been removed and you have been logged out. For complete account deletion, contact the site owner.";
-      deleteMsg.className = "success-text";
-      window.location.href = "index.html";
-    } catch(e){
-      console.error(e);
-      deleteMsg.textContent = "Error deleting your data. Please try again.";
+    if (!currentUser) {
+      deleteMsg.textContent = "No user session found.";
       deleteMsg.className = "error-text";
+      return;
     }
+
+    // Call Vercel backend API route
+    const res = await fetch("/api/delete-account", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: currentUser.id })
+    });
+
+    const result = await res.json();
+
+    if (result.error) {
+      deleteMsg.textContent = "Error: " + result.error;
+      deleteMsg.className = "error-text";
+      return;
+    }
+
+    // Logout and redirect
+    await supabase.auth.signOut();
+    alert("Your account has been permanently deleted.");
+    window.location.href = "index.html";
   });
 
   checkUploadLock(md.paypal_email || "");
