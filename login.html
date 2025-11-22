@@ -131,19 +131,17 @@ fetch("footer.html?v=1")
 
 <!-- AUTH LOGIC -->
 <script type="module">
-import { supabase } from "./js/supabase-config.js";
+import { supabase } from "/js/supabase-config.js";
 
 /* PREVENT REDIRECT DURING PASSWORD RECOVERY */
 supabase.auth.getSession().then(({ data })=>{
   const hash = window.location.hash;
 
-  // If the URL contains recovery, DO NOT redirect
   if (hash.includes("type=recovery")) {
     console.log("Recovery mode detected — no redirect.");
     return;
   }
 
-  // Otherwise redirect if logged in
   if (data.session){
     window.location.href = "dashboard.html";
   }
@@ -229,6 +227,7 @@ forgotBtn.onclick = async ()=>{
   }
 };
 </script>
+
 
 </body>
 </html>
