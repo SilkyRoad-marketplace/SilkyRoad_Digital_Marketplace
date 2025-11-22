@@ -10,6 +10,9 @@
 <meta name="description" content="Choose a Silky Road seller plan: Free, Plus, or Pro. Compare platform fees, PayPal fees, upload limits, and seller payout percentages.">
 <meta name="keywords" content="sell digital products, marketplace pricing, seller plans, platform fees">
 
+<!-- Load PayPal SDK ONCE -->
+<script src="https://www.paypal.com/sdk/js?client-id=AYAQJGW227ncOckTYKROx4KAz6QCJorII3-GUA-JFVHzeAyxQD_rltfYGV86hPzZ3ypAcNjE51OnrYrO&vault=true&intent=subscription"></script>
+
 <style>
 body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f9;color:#222}
 .container{max-width:1100px;margin:0 auto;padding:16px}
@@ -61,13 +64,11 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
 .plan-features li::before{
   content:"✔ ";color:green;font-weight:bold;
 }
-.plan-button{
-  width:100%;background:#2b6ef6;color:#fff;border:none;
-  padding:10px 14px;border-radius:6px;cursor:pointer;
-  font-size:15px;
-}
-.plan-button.secondary{background:#6c757d;}
 .plan-note{font-size:12px;color:#777;margin-top:8px;}
+
+.paypal-btn-container{
+  margin-top:10px;
+}
 
 /* Logo styling */
 .logo-img{height:39px;width:auto;vertical-align:middle;}
@@ -169,10 +170,29 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
           <li>Upload file size: <strong>25MB limit/upload</strong></li>
         </ul>
 
-        <!-- Replace # with PayPal subscription URL later -->
-        <a href="#" id="plusPlanLink">
-          <button class="plan-button">Sign up for Plus Plan</button>
-        </a>
+        <!-- PayPal PLUS BUTTON -->
+        <div id="paypal-plus-btn" class="paypal-btn-container"></div>
+
+        <script>
+        paypal.Buttons({
+            style: {
+                shape: 'rect',
+                color: 'blue',
+                layout: 'vertical',
+                height: 42,
+                label: 'subscribe',
+                tagline: false
+            },
+            createSubscription: function(data, actions) {
+                return actions.subscription.create({
+                    plan_id: 'P-6PX055368K7005705NEQYRFQ'
+                });
+            },
+            onApprove: function(data, actions) {
+                alert("Plus Plan Activated! Subscription ID: " + data.subscriptionID);
+            }
+        }).render('#paypal-plus-btn');
+        </script>
 
         <p class="plan-note">Cancel anytime via PayPal or your dashboard.</p>
       </div>
@@ -201,10 +221,29 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
           <li>Upload file size: <strong>50MB MAX/upload</strong></li>
         </ul>
 
-        <!-- Replace # with PayPal subscription URL later -->
-        <a href="#" id="proPlanLink">
-          <button class="plan-button">Sign up for Pro Plan</button>
-        </a>
+        <!-- PayPal PRO BUTTON -->
+        <div id="paypal-pro-btn" class="paypal-btn-container"></div>
+
+        <script>
+        paypal.Buttons({
+            style: {
+                shape: 'rect',
+                color: 'blue',
+                layout: 'vertical',
+                height: 42,
+                label: 'subscribe',
+                tagline: false
+            },
+            createSubscription: function(data, actions) {
+                return actions.subscription.create({
+                    plan_id: 'P-71K62824XF3988523NEQY6RA'
+                });
+            },
+            onApprove: function(data, actions) {
+                alert("Pro Plan Activated! Subscription ID: " + data.subscriptionID);
+            }
+        }).render('#paypal-pro-btn');
+        </script>
 
         <p class="plan-note">Cancel anytime via PayPal or your dashboard.</p>
       </div>
