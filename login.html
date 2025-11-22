@@ -129,6 +129,9 @@ fetch("footer.html?v=1")
   .then(d=>document.querySelector(".footer").innerHTML=d);
 </script>
 
+<!-- LOAD SUPABASE CONFIG -->
+<script type="module" src="/js/supabase-config.js"></script>
+
 <!-- AUTH LOGIC -->
 <script type="module">
 import { supabase } from "/js/supabase-config.js";
@@ -227,7 +230,6 @@ forgotBtn.onclick = async ()=>{
   }
 };
 </script>
-
 
 </body>
 </html>
