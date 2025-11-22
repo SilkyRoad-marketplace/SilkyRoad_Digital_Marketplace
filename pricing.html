@@ -10,7 +10,7 @@
 <meta name="description" content="Choose a Silky Road seller plan: Free, Plus, or Pro. Compare platform fees, PayPal fees, upload limits, and seller payout percentages.">
 <meta name="keywords" content="sell digital products, marketplace pricing, seller plans, platform fees">
 
-<!-- Load PayPal SDK ONCE -->
+<!-- PayPal SDK LOADED ONCE -->
 <script src="https://www.paypal.com/sdk/js?client-id=AYAQJGW227ncOckTYKROx4KAz6QCJorII3-GUA-JFVHzeAyxQD_rltfYGV86hPzZ3ypAcNjE51OnrYrO&vault=true&intent=subscription"></script>
 
 <style>
@@ -34,11 +34,24 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
   border-radius:10px;
   padding:16px;
   box-shadow:0 2px 8px rgba(0,0,0,0.05);
+
+  /* NEW — modern hover effect */
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
+.plan-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 6px 18px rgba(0,0,0,0.12);
+}
+
 .plan-card.popular{
-  border-color:#2b6ef6;
-  box-shadow:0 4px 14px rgba(43,110,246,0.2);
+  border-color:#2261e0;
+  box-shadow:0 6px 20px rgba(43,110,246,0.28);
 }
+.plan-card.popular:hover{
+  transform:translateY(-6px);
+  box-shadow:0 10px 26px rgba(43,110,246,0.33);
+}
+
 .plan-header{
   display:flex;
   justify-content:space-between;
@@ -48,26 +61,72 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
 .plan-name{font-size:20px;font-weight:bold;}
 .plan-price{font-size:22px;font-weight:bold;}
 .plan-tag{
-  font-size:12px;color:#fff;background:#2b6ef6;
-  padding:3px 8px;border-radius:999px;
+  font-size:11px;
+  padding:4px 10px;
+  color:#fff;
+  background:#2b6ef6;
+  border-radius:999px;
+  font-weight:600;
+  letter-spacing:0.3px;
 }
-.plan-body p{margin:6px 0;}
-.plan-fees{font-size:14px;color:#555;margin:10px 0;}
+
+.plan-body p:first-of-type{
+  border-bottom:1px solid #eee;
+  padding-bottom:8px;
+  margin-bottom:12px;
+}
+
+.plan-fees{
+  font-size:14px;
+  color:#555;
+  margin:10px 0;
+  border-bottom:1px solid #eee;
+  padding-bottom:10px;
+  margin-bottom:12px;
+}
 .plan-fees strong{color:#222;}
+
 .plan-features{
-  list-style:none;padding-left:0;margin:10px 0 16px;
+  list-style:none;
+  padding-left:0;
+  margin:10px 0 16px;
   font-size:14px;
 }
 .plan-features li{
   margin:4px 0;
 }
 .plan-features li::before{
-  content:"✔ ";color:green;font-weight:bold;
+  content:"✔ ";
+  color:green;
+  font-weight:bold;
 }
+
 .plan-note{font-size:12px;color:#777;margin-top:8px;}
 
 .paypal-btn-container{
-  margin-top:10px;
+  margin-top:12px;
+  margin-bottom:5px;
+  text-align:center;
+}
+.plan-card .paypal-btn-container iframe{
+  width:100% !important;
+  min-height:42px !important;
+}
+
+/* Free button perfect match */
+.plan-button.free-btn{
+  width:100%;
+  background:#2b6ef6;
+  color:#fff;
+  padding:12px;
+  font-size:15px;
+  border-radius:6px;
+  border:none;
+  cursor:pointer;
+  transition:0.3s;
+}
+.plan-button.free-btn:hover{
+  background:#1f54c9;
 }
 
 /* Logo styling */
@@ -122,6 +181,7 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
         <div class="plan-name">Try for Free</div>
         <div class="plan-price">$0 <span style="font-size:14px;font-weight:normal;">/ mo</span></div>
       </div>
+
       <div class="plan-body">
         <p>Perfect for new creators testing digital products.</p>
 
@@ -139,9 +199,9 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
           <li>Upload file size: <strong>10MB limit/upload</strong></li>
         </ul>
 
-        <a href="login.html">
-          <button class="plan-button">Sign up for Free</button>
-        </a>
+        <!-- FREE BUTTON FIXED BLUE -->
+        <button class="plan-button free-btn">Sign up for Free</button>
+
         <p class="plan-note">Upgrade to Plus or Pro anytime.</p>
       </div>
     </div>
@@ -153,6 +213,7 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
         <div class="plan-price">$25 <span style="font-size:14px;font-weight:normal;">/ mo</span></div>
         <span class="plan-tag">Most Popular</span>
       </div>
+
       <div class="plan-body">
         <p>Lower platform fees and higher upload limits.</p>
 
@@ -170,26 +231,26 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
           <li>Upload file size: <strong>25MB limit/upload</strong></li>
         </ul>
 
-        <!-- PayPal PLUS BUTTON -->
+        <!-- PAYPAL BUTTON PLUS -->
         <div id="paypal-plus-btn" class="paypal-btn-container"></div>
 
         <script>
         paypal.Buttons({
-            style: {
-                shape: 'rect',
-                color: 'blue',
-                layout: 'vertical',
-                height: 42,
-                label: 'subscribe',
-                tagline: false
+            style:{
+              shape:'rect',
+              color:'blue',
+              layout:'vertical',
+              height:42,
+              label:'subscribe',
+              tagline:false
             },
-            createSubscription: function(data, actions) {
-                return actions.subscription.create({
-                    plan_id: 'P-6PX055368K7005705NEQYRFQ'
-                });
+            createSubscription:function(data, actions){
+              return actions.subscription.create({
+                plan_id:'P-6PX055368K7005705NEQYRFQ'
+              });
             },
-            onApprove: function(data, actions) {
-                alert("Plus Plan Activated! Subscription ID: " + data.subscriptionID);
+            onApprove:function(data){
+              alert("Plus Plan Activated! Subscription ID: "+data.subscriptionID);
             }
         }).render('#paypal-plus-btn');
         </script>
@@ -204,6 +265,7 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
         <div class="plan-name">Pro Plan</div>
         <div class="plan-price">$75 <span style="font-size:14px;font-weight:normal;">/ mo</span></div>
       </div>
+
       <div class="plan-body">
         <p>Maximum earnings and full upload limit.</p>
 
@@ -221,26 +283,26 @@ body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f7f7f
           <li>Upload file size: <strong>50MB MAX/upload</strong></li>
         </ul>
 
-        <!-- PayPal PRO BUTTON -->
+        <!-- PAYPAL BUTTON PRO -->
         <div id="paypal-pro-btn" class="paypal-btn-container"></div>
 
         <script>
         paypal.Buttons({
-            style: {
-                shape: 'rect',
-                color: 'blue',
-                layout: 'vertical',
-                height: 42,
-                label: 'subscribe',
-                tagline: false
+            style:{
+              shape:'rect',
+              color:'blue',
+              layout:'vertical',
+              height:42,
+              label:'subscribe',
+              tagline:false
             },
-            createSubscription: function(data, actions) {
-                return actions.subscription.create({
-                    plan_id: 'P-71K62824XF3988523NEQY6RA'
-                });
+            createSubscription:function(data, actions){
+              return actions.subscription.create({
+                plan_id:'P-71K62824XF3988523NEQY6RA'
+              });
             },
-            onApprove: function(data, actions) {
-                alert("Pro Plan Activated! Subscription ID: " + data.subscriptionID);
+            onApprove:function(data){
+              alert("Pro Plan Activated! Subscription ID: "+data.subscriptionID);
             }
         }).render('#paypal-pro-btn');
         </script>
