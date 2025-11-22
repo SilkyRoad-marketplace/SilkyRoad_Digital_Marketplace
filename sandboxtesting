@@ -1,4 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PayPal Test</title>
 <script src="https://www.paypal.com/sdk/js?client-id=Abn1e204tIvWXqalu_kXY82nyGpiYhysMIYcUJhZzj8mCCNqi_5tZW4_OgTaoghvHupApOetT3Oz8joa&currency=USD"></script>
+</head>
+
+<body>
+
+<h2>PayPal Button Test</h2>
 
 <div id="paypal-button-container"></div>
 
@@ -18,3 +28,6 @@
     }
   }).render('#paypal-button-container');
 </script>
+
+</body>
+</html>
