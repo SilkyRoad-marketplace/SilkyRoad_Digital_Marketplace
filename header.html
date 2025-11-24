@@ -27,6 +27,10 @@ nav .links button {
   padding:10px 14px;
   border-radius:6px;
   cursor:pointer;
+  font-weight:600;
+}
+nav .links button.logout-btn {
+  background:#f44336 !important; /* red logout button */
 }
 
 /* Logo styling */
@@ -45,13 +49,19 @@ nav .links button {
           <img src="favicon.png" alt="Silky Road" class="logo-img">
         </a>
       </div>
+
       <div class="links">
         <a href="contact.html">Contact Us</a>
         <a href="pricing.html">Pricing</a>
         <a href="category.html">Marketplace</a>
         <a href="seller.html">Become a Seller</a>
-        <a href="login.html"><button>Seller Login</button></a>
+
+        <!-- ⚡ Dynamic Login/Logout Button -->
+        <button id="sellerAuthBtn">Seller Login</button>
       </div>
     </nav>
   </div>
 </header>
+
+<!-- Load header logic -->
+<script type="module" src="/js/header.js?v=2"></script>
