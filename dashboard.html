@@ -424,7 +424,12 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
     await supabase.auth.signOut();
     window.location.href = "login.html";
   } catch (err) {
-    console.error("Logout error:", err);
+  console.error("UPLOAD ERROR:", err);
+
+  msg.textContent = "Upload failed: " + (err?.message || JSON.stringify(err));
+  msg.className = "error-text";
+}
+
   }
 });
 
