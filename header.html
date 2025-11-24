@@ -20,7 +20,9 @@ nav .links a {
   color:#333;
   font-weight:600;
 }
-nav .links button {
+
+/* Seller auth button */
+#sellerAuthBtn {
   background:#2b6ef6;
   color:#fff;
   border:none;
@@ -28,12 +30,14 @@ nav .links button {
   border-radius:6px;
   cursor:pointer;
   font-weight:600;
-}
-nav .links button.logout-btn {
-  background:#f44336 !important; /* red logout button */
+  margin-left:12px;
 }
 
-/* Logo styling */
+#sellerAuthBtn.logout {
+  background:#f44336 !important;
+}
+
+/* Logo */
 .logo-img {
   height:39px;
   width:auto;
@@ -56,7 +60,7 @@ nav .links button.logout-btn {
         <a href="category.html">Marketplace</a>
         <a href="seller.html">Become a Seller</a>
 
-        <!-- ⚡ Dynamic Login/Logout Button -->
+        <!-- 🔥 MAIN BUTTON (Login / Logout controlled by JS) -->
         <button id="sellerAuthBtn">Seller Login</button>
       </div>
     </nav>
@@ -64,4 +68,4 @@ nav .links button.logout-btn {
 </header>
 
 <!-- Load header logic -->
-<script type="module" src="/js/header.js?v=2"></script>
+<script type="module" src="/js/header.js"></script>
