@@ -418,226 +418,140 @@ fetch("footer.html?v=1")
 <!-- DASHBOARD LOGIC -->
 <script type="module">
 import { supabase } from "/js/supabase-config.js";
-// FORCE WORKING LOGOUT BUTTON (independent from all other code)
-document.getElementById("logoutBtn").addEventListener("click", async () => {
+
+const welcomeLine = document.getElementById("welcomeLine");
+const logoutBtn   = document.getElementById("logoutBtn");
+const navBtns     = document.querySelectorAll(".nav-btn");
+const sectionIds  = ["overview","products","upload","orders","summary","account"];
+
+/* ------------------ FIXED LOGOUT BUTTON (WORKS EVERYWHERE) ------------------ */
+logoutBtn.addEventListener("click", async () => {
   try {
     await supabase.auth.signOut();
     window.location.href = "login.html";
   } catch (err) {
-  console.error("UPLOAD ERROR:", err);
-
-  msg.textContent = "Upload failed: " + (err?.message || JSON.stringify(err));
-  msg.className = "error-text";
-}
-
+    console.error("Logout error:", err);
+    alert("Logout failed. Please retry.");
   }
 });
 
-  
-const welcomeLine = document.getElementById("welcomeLine");
-const logoutBtn = document.getElementById("logoutBtn");
-const navBtns = document.querySelectorAll(".nav-btn");
-const sectionIds = ["overview","products","upload","orders","summary","account"];
-
-/* everything below stays the same */
-
-/* Category → Subcategory map */
+/* --------------------------- CATEGORY MAP --------------------------- */
 const subcategoryMap = {
-  "Educational": [
-    "eBooks",
-    "Online Courses",
-    "Worksheets",
-    "Tutorials",
-    "Digital Workbooks"
-  ],
-  "Creative Assets": [
-    "Stock Photos",
-    "Videos",
-    "Music / Audio Tracks",
-    "Sound Effects",
-    "Digital Art",
-    "Fonts",
-    "Brushes",
-    "Lightroom Presets"
-  ],
-  "Productivity": [
-    "Planners",
-    "Journals",
-    "Social Media Packs",
-    "Business Templates",
-    "Spreadsheets",
-    "Notion Templates"
-  ],
-  "Templates": [
-    "Canva Templates",
-    "Digital Stickers",
-    "Printable Games",
-    "Craft Patterns",
-    "Email Templates"
-  ]
+  "Educational": ["eBooks","Online Courses","Worksheets","Tutorials","Digital Workbooks"],
+  "Creative Assets": ["Stock Photos","Videos","Music / Audio Tracks","Sound Effects","Digital Art","Fonts","Brushes","Lightroom Presets"],
+  "Productivity": ["Planners","Journals","Social Media Packs","Business Templates","Spreadsheets","Notion Templates"],
+  "Templates": ["Canva Templates","Digital Stickers","Printable Games","Craft Patterns","Email Templates"]
 };
 
-function populateSubcategories(selectedCategory, selectEl){
+function populateSubcategories(selected, selectEl){
   selectEl.innerHTML = "";
-  const defaultOpt = document.createElement("option");
-  defaultOpt.value = "";
-  defaultOpt.textContent = "Select subcategory";
-  selectEl.appendChild(defaultOpt);
-
-  const subs = subcategoryMap[selectedCategory] || [];
-  subs.forEach(sub=>{
+  const def = document.createElement("option");
+  def.value = "";
+  def.textContent = "Select subcategory";
+  selectEl.appendChild(def);
+  (subcategoryMap[selected] || []).forEach(sc=>{
     const opt = document.createElement("option");
-    opt.value = sub;
-    opt.textContent = sub;
+    opt.value = sc;
+    opt.textContent = sc;
     selectEl.appendChild(opt);
   });
 }
 
-function formatMoneyFromCents(cents){
-  if (typeof cents !== "number") return "USD 0.00";
-  return "USD " + (cents / 100).toFixed(2);
-}
-
-/* Switch section */
+/* --------------------------- SECTION SWITCHING --------------------------- */
 function showSection(name){
   sectionIds.forEach(id=>{
-    const el = document.getElementById("section-"+id);
-    if (!el) return;
-    el.style.display = (id === name) ? "block" : "none";
+    document.getElementById("section-"+id).style.display = (id===name?"block":"none");
   });
   navBtns.forEach(btn=>{
-    btn.classList.toggle("active", btn.dataset.section === name);
+    btn.classList.toggle("active", btn.dataset.section===name);
   });
 }
 
-/* Sidebar click handlers */
 navBtns.forEach(btn=>{
   btn.addEventListener("click", ()=>{
-    const section = btn.dataset.section;
-    showSection(section);
+    showSection(btn.dataset.section);
   });
 });
 
-/* MAIN: Check session */
+/* --------------------------- SESSION CHECK --------------------------- */
 supabase.auth.getSession().then(async ({ data })=>{
   if (!data.session){
     window.location.href = "login.html";
     return;
   }
+
   const user = data.session.user;
-
-  const md = user.user_metadata || {};
-  const namePieces = [];
-  if (md.first_name) namePieces.push(md.first_name);
-  if (md.last_name) namePieces.push(md.last_name);
-  const display = (namePieces.join(" ") || md.display_name || user.email || "Seller");
-  welcomeLine.textContent = "Welcome, " + display;
-
-  setupLogout();
+  setupWelcome(user);
   setupAccount(user);
   setupUpload(user);
   loadMyProducts(user);
   loadOrdersAndSummary(user);
 });
 
-/* Logout */
-function setupLogout(){
-  logoutBtn.addEventListener("click", async ()=>{
-    await supabase.auth.signOut();
-    window.location.href = "login.html";
-  });
+/* --------------------------- WELCOME NAME --------------------------- */
+function setupWelcome(user){
+  const md = user.user_metadata || {};
+  const name = [
+    md.first_name || "",
+    md.last_name  || ""
+  ].join(" ").trim() || md.display_name || user.email;
+
+  welcomeLine.textContent = "Welcome, " + name;
 }
 
-/* Account Settings */
+/* --------------------------- ACCOUNT SETTINGS --------------------------- */
 function setupAccount(user){
   const md = user.user_metadata || {};
-  const accFirstName = document.getElementById("accFirstName");
-  const accLastName  = document.getElementById("accLastName");
-  const accDisplayName = document.getElementById("accDisplayName");
-  const accPaypalEmail = document.getElementById("accPaypalEmail");
-  const accountForm = document.getElementById("accountForm");
-  const accountMessage = document.getElementById("accountMessage");
 
-  accFirstName.value = md.first_name || "";
-  accLastName.value  = md.last_name || "";
-  accDisplayName.value = md.display_name || "";
-  accPaypalEmail.value = md.paypal_email || "";
+  const f = id => document.getElementById(id);
 
-  accountForm.addEventListener("submit", async (e)=>{
+  f("accFirstName").value   = md.first_name   || "";
+  f("accLastName").value    = md.last_name    || "";
+  f("accDisplayName").value = md.display_name || "";
+  f("accPaypalEmail").value = md.paypal_email || "";
+
+  const accountForm = f("accountForm");
+  const msg = f("accountMessage");
+
+  accountForm.addEventListener("submit", async(e)=>{
     e.preventDefault();
-    accountMessage.textContent = "";
-    accountMessage.className = "";
+    msg.textContent = "";
 
-    const firstName = accFirstName.value.trim();
-    const lastName  = accLastName.value.trim();
-    const displayName = accDisplayName.value.trim();
-    const paypalEmail = accPaypalEmail.value.trim();
-
-    if (!paypalEmail){
-      accountMessage.textContent = "PayPal email is required to receive payments.";
-      accountMessage.className = "error-text";
+    const pEmail = f("accPaypalEmail").value.trim();
+    if (!pEmail){
+      msg.textContent = "PayPal email is required.";
+      msg.className = "error-text";
       return;
     }
 
     const { error } = await supabase.auth.updateUser({
       data:{
-        first_name:firstName,
-        last_name:lastName,
-        display_name:displayName,
-        paypal_email:paypalEmail
+        first_name: f("accFirstName").value.trim(),
+        last_name: f("accLastName").value.trim(),
+        display_name: f("accDisplayName").value.trim(),
+        paypal_email: pEmail
       }
     });
 
     if (error){
-      accountMessage.textContent = error.message;
-      accountMessage.className = "error-text";
+      msg.textContent = error.message;
+      msg.className = "error-text";
       return;
     }
 
-    accountMessage.textContent = "Settings updated.";
-    accountMessage.className = "success-text";
-
-    const namePieces = [];
-    if (firstName) namePieces.push(firstName);
-    if (lastName) namePieces.push(lastName);
-    const display = (namePieces.join(" ") || displayName || user.email);
-    welcomeLine.textContent = "Welcome, " + display;
-
-    checkUploadLock(paypalEmail);
+    msg.textContent = "Settings updated.";
+    msg.className = "success-text";
   });
-
-  checkUploadLock(md.paypal_email || "");
 }
 
-/* Enforce PayPal requirement for uploading */
-function checkUploadLock(paypalEmail){
-  const lockNotice = document.getElementById("uploadLockMessage");
-  const uploadBtn = document.getElementById("uploadBtn");
-  const uploadForm = document.getElementById("uploadForm");
-
-  if (!paypalEmail){
-    if (lockNotice) lockNotice.style.display = "block";
-    if (uploadBtn) uploadBtn.disabled = true;
-    if (uploadForm) uploadForm.querySelectorAll("input,textarea,button,select").forEach(el=>{
-      if (el.id !== "uploadBtn") el.disabled = true;
-    });
-  } else {
-    if (lockNotice) lockNotice.style.display = "none";
-    if (uploadBtn) uploadBtn.disabled = false;
-    if (uploadForm) uploadForm.querySelectorAll("input,textarea,button,select").forEach(el=>{
-      el.disabled = false;
-    });
-  }
-}
-
-/* Upload Product */
+/* --------------------------- UPLOAD PRODUCT --------------------------- */
 function setupUpload(user){
   const form = document.getElementById("uploadForm");
-  const msg = document.getElementById("uploadMessage");
+  const msg  = document.getElementById("uploadMessage");
 
-  // Category → subcategory dynamic behavior
   const catSelect = document.getElementById("productCategory");
   const subSelect = document.getElementById("productSubcategory");
+
   catSelect.addEventListener("change", ()=>{
     populateSubcategories(catSelect.value, subSelect);
   });
@@ -647,87 +561,18 @@ function setupUpload(user){
     msg.textContent = "";
     msg.className = "";
 
-    const title = document.getElementById("productTitle").value.trim();
-    const priceVal = parseFloat(document.getElementById("productPrice").value);
-    const description = document.getElementById("productDescription").value.trim();
-    const category = document.getElementById("productCategory").value.trim();
-    const subcategory = document.getElementById("productSubcategory").value.trim();
-    const externalLink = document.getElementById("externalLink").value.trim();
-
-    const fileInput = document.getElementById("productFile");
-    const mainImageFile = document.getElementById("image1").files[0] || null;
-    const image2File = document.getElementById("image2").files[0] || null;
-    const image3File = document.getElementById("image3").files[0] || null;
-
-    const couponCode = document.getElementById("couponCode").value.trim();
-    const couponPercentRaw = document.getElementById("couponPercent").value.trim();
-    const couponPercent = couponPercentRaw ? parseInt(couponPercentRaw,10) : null;
-
-    if (!title){
-      msg.textContent = "Title is required.";
-      msg.className = "error-text";
-      return;
-    }
-    if (isNaN(priceVal) || priceVal < 0){
-      msg.textContent = "Price must be a valid number.";
-      msg.className = "error-text";
-      return;
-    }
-    if (!category){
-      msg.textContent = "Please choose a category.";
-      msg.className = "error-text";
-      return;
-    }
-    if (!subcategory){
-      msg.textContent = "Please choose a subcategory.";
-      msg.className = "error-text";
-      return;
-    }
+    const mainImageFile = document.getElementById("image1").files[0];
     if (!mainImageFile){
       msg.textContent = "Main product image is required.";
       msg.className = "error-text";
       return;
     }
 
-    const mainFile = fileInput.files[0] || null;
-    const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10MB for now
-    const MAX_IMG_BYTES = 5 * 1024 * 1024;
-
-    if (!mainFile && !externalLink){
-      msg.textContent = "Upload a main file or provide an external download link.";
-      msg.className = "error-text";
-      return;
-    }
-
-    if (mainFile && mainFile.size > MAX_FILE_BYTES){
-      msg.textContent = "Main file exceeds 10 MB.";
-      msg.className = "error-text";
-      return;
-    }
-
-    for (const f of [mainImageFile, image2File, image3File]){
-      if (f && f.size > MAX_IMG_BYTES){
-        msg.textContent = "One of the images exceeds 5 MB.";
-        msg.className = "error-text";
-        return;
-      }
-    }
-
-    if (couponPercent !== null && (isNaN(couponPercent) || couponPercent < 1 || couponPercent > 90)){
-      msg.textContent = "Coupon % must be between 1 and 90, or leave empty.";
-      msg.className = "error-text";
-      return;
-    }
-
-    msg.textContent = "Uploading product…";
+    msg.textContent = "Uploading…";
     msg.className = "text-muted";
 
-    let downloadUrl = externalLink || "";
-    let mainImageUrl = null;
-    let image2Url = null;
-    let image3Url = null;
+    try {
 
-    try{
       async function uploadToBucket(path, file){
         const { error } = await supabase.storage.from("seller-uploads").upload(path, file);
         if (error) throw error;
@@ -736,60 +581,36 @@ function setupUpload(user){
       }
 
       const now = Date.now();
+      const imgPath = `${user.id}/images/${now}_${mainImageFile.name}`;
+      const mainImageUrl = await uploadToBucket(imgPath, mainImageFile);
 
-      if (mainFile){
-        const filePath = `${user.id}/files/${now}_${mainFile.name}`;
-        downloadUrl = await uploadToBucket(filePath, mainFile);
-      }
-
-      if (mainImageFile){
-        const imgPath = `${user.id}/images/${now}_main_${mainImageFile.name}`;
-        mainImageUrl = await uploadToBucket(imgPath, mainImageFile);
-      }
-
-      if (image2File){
-        const imgPath2 = `${user.id}/images/${now}_img2_${image2File.name}`;
-        image2Url = await uploadToBucket(imgPath2, image2File);
-      }
-      if (image3File){
-        const imgPath3 = `${user.id}/images/${now}_img3_${image3File.name}`;
-        image3Url = await uploadToBucket(imgPath3, image3File);
-      }
-
-      const { error:insertErr } = await supabase.from("products").insert({
+      // Insert product
+      const { error } = await supabase.from("products").insert({
         seller_id: user.id,
-        title,
-        description,
-        price: priceVal,
-        category,
-        subcategory,
-        main_image_url: mainImageUrl,
-        image2_url: image2Url,
-        image3_url: image3Url,
-        download_url: downloadUrl,
-        coupon_code: couponCode || null,
-        coupon_percent: couponPercent
+        title: document.getElementById("productTitle").value.trim(),
+        description: document.getElementById("productDescription").value.trim(),
+        price: parseFloat(document.getElementById("productPrice").value),
+        category: catSelect.value,
+        subcategory: subSelect.value,
+        main_image_url: mainImageUrl
       });
 
-      if (insertErr) throw insertErr;
+      if (error) throw error;
 
-      msg.textContent = "Product uploaded successfully.";
+      msg.textContent = "Product uploaded.";
       msg.className = "success-text";
-
       form.reset();
-      loadMyProducts(user);
-    } catch (err) {
-  console.error("UPLOAD ERROR:", err);
 
-  msg.textContent = "Upload failed: " + (err && err.message ? err.message : JSON.stringify(err));
-  msg.className = "error-text";
-}
-
+    } catch(err){
+      console.error("UPLOAD ERROR:", err);
+      msg.textContent = "Upload failed: " + (err.message || JSON.stringify(err));
+      msg.className = "error-text";
     }
+
   });
 }
 
-/* Load My Products (with Edit + Delete using API) */
+/* --------------------------- LOAD PRODUCTS --------------------------- */
 async function loadMyProducts(user){
   const tbody = document.getElementById("productsTbody");
   const empty = document.getElementById("productsEmpty");
@@ -799,194 +620,108 @@ async function loadMyProducts(user){
   const { data, error } = await supabase
     .from("products")
     .select("*")
-    .eq("seller_id", user.id)
-    .order("created_at",{ ascending:false });
+    .eq("seller_id", user.id);
 
   if (error){
-    console.error(error);
     empty.textContent = "Error loading products.";
     return;
   }
-  if (!data || data.length === 0){
-    empty.textContent = "You haven't uploaded any products yet.";
+  if (!data.length){
+    empty.textContent = "You haven't uploaded any products.";
     return;
   }
 
   data.forEach(p=>{
     const tr = document.createElement("tr");
 
-    const mainImgCell = document.createElement("td");
+    const tdImg = document.createElement("td");
     if (p.main_image_url){
       const img = document.createElement("img");
       img.src = p.main_image_url;
-      img.alt = p.title || "Product";
-      img.style.width = "60px";
-      img.style.height = "60px";
+      img.style.width = "50px";
+      img.style.height = "50px";
       img.style.objectFit = "cover";
-      img.style.borderRadius = "4px";
-      img.style.cursor = "pointer";
-      img.addEventListener("click", ()=>{
-        window.location.href = "product.html?id=" + p.id;
-      });
-      mainImgCell.appendChild(img);
-    } else {
-      mainImgCell.textContent = "-";
-    }
+      tdImg.appendChild(img);
+    } else tdImg.textContent = "-";
 
-    const titleCell = document.createElement("td");
-    const link = document.createElement("a");
-    link.href = "product.html?id=" + p.id;
-    link.textContent = p.title || "Untitled";
-    link.style.textDecoration = "none";
-    link.style.color = "#222";
-    titleCell.appendChild(link);
+    const tdTitle = document.createElement("td");
+    tdTitle.textContent = p.title;
 
-    const catCell = document.createElement("td");
-    catCell.textContent = p.category || "";
+    const tdCat = document.createElement("td");
+    tdCat.textContent = p.category;
 
-    const priceCell = document.createElement("td");
-    const priceVal = (typeof p.price === "number") ? p.price.toFixed(2) : "0.00";
-    priceCell.textContent = "USD " + priceVal;
+    const tdPrice = document.createElement("td");
+    tdPrice.textContent = "USD " + p.price.toFixed(2);
 
-    const couponCell = document.createElement("td");
-    if (p.coupon_code && p.coupon_percent){
-      couponCell.textContent = `${p.coupon_code} (${p.coupon_percent}% off)`;
-    } else {
-      couponCell.textContent = "-";
-    }
-
-    const actionsCell = document.createElement("td");
-
-    // Edit button
-    const editBtn = document.createElement("button");
-    editBtn.textContent = "Edit";
-    editBtn.className = "secondary small";
-    editBtn.style.marginRight = "6px";
-    editBtn.addEventListener("click", ()=>{
-      window.location.href = "edit-product.html?id=" + p.id;
-    });
-    actionsCell.appendChild(editBtn);
-
-    // Delete button (goes through /api/delete-product → deletes DB row + files)
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "Delete";
-    delBtn.className = "danger small";
-    delBtn.addEventListener("click", async ()=>{
-      const ok = window.confirm("Delete this product, including its files and images?");
-      if (!ok) return;
-
-      try{
-        const res = await fetch("/api/delete-product", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            product_id: p.id,
-            seller_id: user.id
-          })
-        });
-        const result = await res.json();
-        if (!res.ok || result.error){
-          alert("Error deleting product: " + (result.error || res.statusText));
-          console.error("Delete error:", result);
-        } else {
-          loadMyProducts(user);
-        }
-      } catch(e){
-        console.error("Delete request failed:", e);
-        alert("Failed to delete product (network error).");
-      }
-    });
-    actionsCell.appendChild(delBtn);
-
-    tr.appendChild(mainImgCell);
-    tr.appendChild(titleCell);
-    tr.appendChild(catCell);
-    tr.appendChild(priceCell);
-    tr.appendChild(couponCell);
-    tr.appendChild(actionsCell);
+    tr.appendChild(tdImg);
+    tr.appendChild(tdTitle);
+    tr.appendChild(tdCat);
+    tr.appendChild(tdPrice);
 
     tbody.appendChild(tr);
   });
 }
 
-/* Orders + Summary */
+/* --------------------------- LOAD ORDERS + SUMMARY --------------------------- */
 async function loadOrdersAndSummary(user){
   const tbody = document.getElementById("ordersTbody");
   const empty = document.getElementById("ordersEmpty");
-  const summaryOrders = document.getElementById("summaryOrders");
-  const summaryRevenue = document.getElementById("summaryRevenue");
-
   tbody.innerHTML = "";
   empty.textContent = "";
-  summaryOrders.textContent = "0";
-  summaryRevenue.textContent = "USD 0.00";
+
+  const summaryOrders  = document.getElementById("summaryOrders");
+  const summaryRevenue = document.getElementById("summaryRevenue");
 
   const { data, error } = await supabase
     .from("orders")
-    .select("id,product_id,amount_cents,status,paid_at")
-    .eq("seller_id", user.id)
-    .order("paid_at",{ ascending:false });
+    .select("*")
+    .eq("seller_id", user.id);
 
   if (error){
-    console.error(error);
     empty.textContent = "Error loading orders.";
     return;
   }
-  if (!data || data.length === 0){
-    empty.textContent = "No orders yet.";
+  if (!data.length){
+    empty.textContent = "No orders.";
     return;
   }
 
-  const productIds = [...new Set(data.map(o=>o.product_id).filter(Boolean))];
-  let productMap = {};
-  if (productIds.length > 0){
-    const { data:prodData, error:prodErr } = await supabase
-      .from("products")
-      .select("id,title")
-      .in("id", productIds);
-    if (!prodErr && prodData){
-      prodData.forEach(p=>{ productMap[p.id] = p.title; });
-    }
-  }
-
-  let totalOrders = 0;
-  let totalCents = 0;
+  let count = 0;
+  let total = 0;
 
   data.forEach(o=>{
     const tr = document.createElement("tr");
-    const dateStr = o.paid_at ? new Date(o.paid_at).toLocaleDateString() : "-";
-    const title = productMap[o.product_id] || "(Unknown product)";
-    const amountText = formatMoneyFromCents(o.amount_cents);
 
-    const dateCell = document.createElement("td");
-    dateCell.textContent = dateStr;
+    const td1 = document.createElement("td");
+    td1.textContent = o.paid_at ? new Date(o.paid_at).toLocaleDateString() : "-";
 
-    const titleCell = document.createElement("td");
-    titleCell.textContent = title;
+    const td2 = document.createElement("td");
+    td2.textContent = o.product_id || "-";
 
-    const statusCell = document.createElement("td");
-    statusCell.textContent = o.status || "-";
+    const td3 = document.createElement("td");
+    td3.textContent = o.status || "-";
 
-    const amountCell = document.createElement("td");
-    amountCell.textContent = amountText;
+    const td4 = document.createElement("td");
+    td4.textContent = "USD " + (o.amount_cents/100).toFixed(2);
 
-    tr.appendChild(dateCell);
-    tr.appendChild(titleCell);
-    tr.appendChild(statusCell);
-    tr.appendChild(amountCell);
+    tr.appendChild(td1);
+    tr.appendChild(td2);
+    tr.appendChild(td3);
+    tr.appendChild(td4);
 
     tbody.appendChild(tr);
 
     if (o.status === "paid"){
-      totalOrders += 1;
-      if (typeof o.amount_cents === "number") totalCents += o.amount_cents;
+      count++;
+      total += o.amount_cents;
     }
   });
 
-  summaryOrders.textContent = String(totalOrders);
-  summaryRevenue.textContent = formatMoneyFromCents(totalCents);
+  summaryOrders.textContent = count;
+  summaryRevenue.textContent = "USD " + (total/100).toFixed(2);
 }
 </script>
+
 
 </body>
 </html>
