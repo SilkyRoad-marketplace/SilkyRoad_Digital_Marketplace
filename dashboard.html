@@ -778,10 +778,13 @@ function setupUpload(user){
 
       form.reset();
       loadMyProducts(user);
-    } catch(err){
-      console.error("Upload error:", err);
-      msg.textContent = "Error uploading product.";
-      msg.className = "error-text";
+    } catch (err) {
+  console.error("UPLOAD ERROR:", err);
+
+  msg.textContent = "Upload failed: " + (err && err.message ? err.message : JSON.stringify(err));
+  msg.className = "error-text";
+}
+
     }
   });
 }
