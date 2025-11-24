@@ -1,23 +1,25 @@
+// /js/header.js
 import { supabase } from "/js/supabase-config.js";
 
 const btn = document.getElementById("sellerAuthBtn");
 
-// On load — check session
+// Page loaded → check current session
 supabase.auth.getSession().then(({ data }) => {
   updateButton(data.session);
 });
 
-// Listen for login/logout changes globally
-supabase.auth.onAuthStateChange((event, session) => {
+// Detect login / logout changes globally
+supabase.auth.onAuthStateChange((_event, session) => {
   updateButton(session);
 });
 
-// Update button based on session
 function updateButton(session) {
+  if (!btn) return;
+
   if (session && session.user) {
-    // Logged in
+    // Logged in → show LOGOUT
     btn.textContent = "Logout";
-    btn.classList.add("logout-btn");
+    btn.classList.add("logout");
 
     btn.onclick = async () => {
       await supabase.auth.signOut();
@@ -25,9 +27,9 @@ function updateButton(session) {
     };
 
   } else {
-    // Logged out
+    // Logged out → show LOGIN
     btn.textContent = "Seller Login";
-    btn.classList.remove("logout-btn");
+    btn.classList.remove("logout");
 
     btn.onclick = () => {
       window.location.href = "login.html";
