@@ -418,7 +418,17 @@ fetch("footer.html?v=1")
 <!-- DASHBOARD LOGIC -->
 <script type="module">
 import { supabase } from "/js/supabase-config.js";
+// FORCE WORKING LOGOUT BUTTON (independent from all other code)
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  try {
+    await supabase.auth.signOut();
+    window.location.href = "login.html";
+  } catch (err) {
+    console.error("Logout error:", err);
+  }
+});
 
+  
 const welcomeLine = document.getElementById("welcomeLine");
 const logoutBtn = document.getElementById("logoutBtn");
 const navBtns = document.querySelectorAll(".nav-btn");
