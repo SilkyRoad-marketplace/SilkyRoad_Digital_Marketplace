@@ -1,31 +1,67 @@
 // js/login.js
+import { supabase } from "./supabase-config.js";
 
-document.getElementById("login-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.querySelector("#login-form");
+  const errorBox = document.querySelector("#login-error");
+  const googleBtn = document.querySelector("#google-signin");
 
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
-  const message = document.getElementById("message");
+  function showError(message) {
+    if (!errorBox) return;
+    errorBox.textContent = message;
+    errorBox.style.display = "block";
+  }
 
-  message.textContent = "Logging in...";
+  // Email + password sign in
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (errorBox) {
+        errorBox.textContent = "";
+        errorBox.style.display = "none";
+      }
 
-  try {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
+      const email = form.email.value.trim();
+      const password = form.password.value;
+
+      if (!email || !password) {
+        showError("Please enter both email and password.");
+        return;
+      }
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        showError(error.message || "Login failed. Please try again.");
+        return;
+      }
+
+      // Login OK → go to dashboard
+      window.location.href = "/dashboard.html";
     });
+  }
 
-    if (error) throw error;
+  // Google sign in
+  if (googleBtn) {
+    googleBtn.addEventListener("click", async () => {
+      if (errorBox) {
+        errorBox.textContent = "";
+        errorBox.style.display = "none";
+      }
 
-    message.style.color = "green";
-    message.textContent = "✅ Login successful! Redirecting to dashboard...";
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: "https://silkyroad.vercel.app/verified.html",
+        },
+      });
 
-    // Redirect to dashboard after a short delay
-    setTimeout(() => {
-      window.location.href = "dashboard.html";
-    }, 1500);
-  } catch (err) {
-    message.style.color = "red";
-    message.textContent = "❌ " + err.message;
+      if (error) {
+        showError(error.message || "Google sign-in failed. Please try again.");
+      }
+    });
   }
 });
