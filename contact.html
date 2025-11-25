@@ -164,5 +164,19 @@ button{
   });
 </script>
 
+<!-- ⭐ DYNAMIC HEADER LOADER (ALWAYS LAST) -->
+<script type="module">
+async function loadHeader() {
+  const container = document.getElementById('header-placeholder');
+  const res = await fetch('/header.html');
+  container.innerHTML = await res.text();
+  document.dispatchEvent(new Event('header:loaded'));
+}
+loadHeader();
+</script>
+
+<script type="module" src="/js/supabaseClient.js"></script>
+<script type="module" src="/js/header.js"></script>
+  
 </body>
 </html>
