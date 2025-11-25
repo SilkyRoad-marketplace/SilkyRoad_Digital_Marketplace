@@ -117,23 +117,24 @@ button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;border-radius
 </head>
 
 <body>
+  <!-- Header will be injected here -->
+  <div id="header-placeholder"></div>
+  <script type="module">
+    async function loadHeader() {
+      const container = document.getElementById('header-placeholder');
+      const res = await fetch('/header.html');
+      container.innerHTML = await res.text();
+      // Tell header.js that header is ready for JS to control the button
+      document.dispatchEvent(new Event('header:loaded'));
+    }
+    loadHeader();
+  </script>
 
-<!-- Shared Header -->
-<div id="header"></div>
-<script>
-  fetch("header.html?v=1")
-    .then(r => r.text())
-    .then(d => document.getElementById("header").innerHTML = d)
-    .catch(e => console.error("Header load failed:", e));
-</script>
+  <!-- Supabase and header logic -->
+  <script type="module" src="/js/supabaseClient.js"></script>
+  <script type="module" src="/js/header.js"></script>
 
-<div class="banner">
-  <img src="banner.jpg" alt="Silky Road Banner">
-  <div class="banner-text">
-    <h1>Discover & Download Digital Products Instantly</h1>
-    <p>Ebooks, art, music, and more — delivered automatically with no shipping required.</p>
-  </div>
-</div>
+
 
 <main class="container">
 
