@@ -1,10 +1,11 @@
 <!doctype html>
 <html lang="en">
 <head>
-<link rel="stylesheet" href="styles.css">  
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="/favicon.png">
+<link rel="stylesheet" href="styles.css">
+
 <title>Silky Road – Buy & Sell Digital Products Instantly | eBooks, Templates, Creative Assets</title>
 
 <meta name="description" content="Discover Silky Road, a full-featured digital marketplace to buy and sell eBooks, templates, creative assets, online courses and music. Secure PayPal payments, instant delivery, seller dashboard, and no upfront fees.">
@@ -18,11 +19,12 @@ nav{display:flex;align-items:center;justify-content:space-between}
 nav .links a{margin-left:12px;text-decoration:none;color:#333;font-weight:600}
 nav .links button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;border-radius:6px;cursor:pointer}
 
-.banner{position:relative}
+.banner{position:relative;margin-top:0;}
 .banner img{width:100%;height:auto;display:block}
-.banner-text{display:none !important;}
 
-/* ⭐ CATEGORY BAR (icons + hover + mobile grid) */
+.banner-text{display:none!important}
+
+/* CATEGORY BAR */
 .category-bar{
   margin:20px 0;
   background:#ffffff;
@@ -75,35 +77,23 @@ nav .links button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;bo
   margin-bottom:12px;
 }
 
-/* Logo styling */
-.logo-img {
-  height: 39px;
-  width: auto;
-  vertical-align: middle;
-}
-
-/* ⭐ MOBILE LAYOUT */
+/* MOBILE */
 @media(max-width:600px){
   .card{width:calc(50% - 6px);}
-
   .category-bar{
     display:grid;
     grid-template-columns:repeat(2,minmax(0,1fr));
     gap:14px;
     padding:16px;
   }
-
-  /* 🏷️ All spans full width (row 1) */
   .category-bar .all-category{
     grid-column:1 / -1;
     text-align:left;
   }
-
   .category-bar > div{
     width:100%;
     text-align:left;
   }
-
   .category-bar div ul{
     left:50%;
     transform:translateX(-50%);
@@ -117,42 +107,30 @@ button{background:#2b6ef6;color:#fff;border:none;padding:10px 14px;border-radius
 </head>
 
 <body>
-  <!-- Header will be injected here -->
-  <div id="header-placeholder"></div>
-  <script type="module">
-    async function loadHeader() {
-      const container = document.getElementById('header-placeholder');
-      const res = await fetch('/header.html');
-      container.innerHTML = await res.text();
-      // Tell header.js that header is ready for JS to control the button
-      document.dispatchEvent(new Event('header:loaded'));
-    }
-    loadHeader();
-  </script>
 
-  <!-- Supabase and header logic -->
-  <script type="module" src="/js/supabaseClient.js"></script>
-  <script type="module" src="/js/header.js"></script>
+<!-- 🔥 HEADER injected here -->
+<div id="header-placeholder"></div>
 
-
+<!-- ⭐ BANNER -->
+<div class="banner">
+  <img src="banner.jpg" alt="Silky Road Marketplace Banner">
+</div>
 
 <main class="container">
 
 <h1>Buy and Sell Digital Products Instantly – eBooks, Templates, Art, Music & More</h1>
 
 <p style="margin-top:16px;font-size:18px;line-height:1.6;">
-Welcome to <strong>Silky Road</strong> — a modern digital marketplace where you can buy and sell high-quality digital products instantly. Discover a wide range of downloadable content including eBooks, templates, digital art, stock photos, printable planners, music, audio files, Lightroom presets, and more. All downloads are delivered automatically and securely with <strong>3-day expiring links</strong> to protect your files and prevent unauthorized sharing.
+Welcome to <strong>Silky Road</strong> — a modern digital marketplace where you can buy and sell high-quality digital products instantly. Discover a wide range of downloadable content including eBooks, templates, digital art, stock photos, printable planners, music, audio files, Lightroom presets, and more.
 </p>
 
 <p style="font-size:18px;line-height:1.6;">
-Creators can join Silky Road for free and start selling immediately without any upfront costs. Upload your digital products (up to 10MB) or add an external download link for larger files, set your own pricing, and receive global payments directly to your PayPal account. Silky Road handles file delivery, payment processing, and secure hosting — so you can focus on creating valuable digital content while earning passive income.
+Creators can join Silky Road for free and start selling immediately without any upfront costs. Upload your digital products (up to 10MB) or add an external download link for larger files, set your own pricing, and receive global payments directly to your PayPal account.
 </p>
 
 <div style="margin-top:24px;">
   <h2 style="font-size:24px;margin-bottom:12px;">Start Exploring or Become a Seller Today</h2>
-  <p style="font-size:18px;line-height:1.6;">
-    Whether you're looking for high-quality digital products or ready to start selling your own creations, Silky Road makes it fast, secure, and easy. Discover thousands of digital downloads or join as a seller and start earning from your content today.
-  </p>
+
   <div style="margin-top:16px;">
     <a href="category.html?category=All">
       <button style="padding:12px 18px;margin-right:10px;">Browse Products</button>
@@ -163,13 +141,11 @@ Creators can join Silky Road for free and start selling immediately without any 
   </div>
 </div>
 
-<!-- ⭐ Category Bar with icons -->
+<!-- ⭐ CATEGORY BAR -->
 <div class="category-bar">
 
   <div class="all-category">🏷️ All
-    <ul>
-      <li><a href="category.html?category=All">All Products</a></li>
-    </ul>
+    <ul><li><a href="category.html?category=All">All Products</a></li></ul>
   </div>
 
   <div>📚 Educational
@@ -229,75 +205,90 @@ Creators can join Silky Road for free and start selling immediately without any 
 <!-- FOOTER -->
 <footer class="footer"></footer>
 <script>
-  fetch("footer.html?v=2")
-    .then(r => r.text())
-    .then(d => document.querySelector(".footer").innerHTML = d)
-    .catch(e => console.error("Footer load failed:", e));
+fetch("footer.html?v=2")
+  .then(r => r.text())
+  .then(d => document.querySelector(".footer").innerHTML = d)
+  .catch(e => console.error("Footer load failed:", e));
 </script>
 
+<!-- ⭐ Load Featured Products -->
 <script type="module">
-  import { supabase } from "./js/supabase-config.js";
+import { supabase } from "./js/supabase-config.js";
 
-  const featuredGrid = document.getElementById("featuredGrid");
-  const featuredEmpty = document.getElementById("featuredEmpty");
+const featuredGrid = document.getElementById("featuredGrid");
+const featuredEmpty = document.getElementById("featuredEmpty");
 
-  async function loadFeatured() {
-    const { data, error } = await supabase
-      .from("products")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(12);
+async function loadFeatured() {
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(12);
 
-    if (error) {
-      console.error(error);
-      featuredEmpty.textContent = "Error loading products.";
-      return;
-    }
-
-    if (!data || data.length === 0) {
-      featuredEmpty.textContent = "No products available yet. Check back soon!";
-      return;
-    }
-
-    data.forEach(p => {
-      const card = document.createElement("div");
-      card.className = "card";
-
-      const img = document.createElement("img");
-      img.src = p.thumbnail_url || "placeholder.jpg";
-      img.alt = p.title || "Product";
-      img.style.width = "100%";
-      img.style.borderRadius = "6px";
-      img.style.cursor = "pointer";
-      img.addEventListener("click", () => {
-        window.location.href = "product.html?id=" + p.id;
-      });
-
-      const title = document.createElement("h4");
-      const link = document.createElement("a");
-      link.href = "product.html?id=" + p.id;
-      link.textContent = p.title || "Untitled";
-      link.style.textDecoration = "none";
-      link.style.color = "#222";
-      title.appendChild(link);
-
-      const type = document.createElement("p");
-      type.innerHTML = `<small>${p.category || ""} ${p.subcategory ? "– " + p.subcategory : ""}</small>`;
-
-      const price = document.createElement("p");
-      price.innerHTML = "<strong>USD " + (p.price || 0).toFixed(2) + "</strong>";
-
-      card.appendChild(img);
-      card.appendChild(title);
-      card.appendChild(type);
-      card.appendChild(price);
-
-      featuredGrid.appendChild(card);
-    });
+  if (error) {
+    console.error(error);
+    featuredEmpty.textContent = "Error loading products.";
+    return;
   }
 
-  loadFeatured();
+  if (!data || data.length === 0) {
+    featuredEmpty.textContent = "No products available yet. Check back soon!";
+    return;
+  }
+
+  data.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const img = document.createElement("img");
+    img.src = p.thumbnail_url || "placeholder.jpg";
+    img.alt = p.title || "Product";
+    img.style.width = "100%";
+    img.style.borderRadius = "6px";
+    img.style.cursor = "pointer";
+    img.addEventListener("click", () => {
+      window.location.href = "product.html?id=" + p.id;
+    });
+
+    const title = document.createElement("h4");
+    const link = document.createElement("a");
+    link.href = "product.html?id=" + p.id;
+    link.textContent = p.title || "Untitled";
+    link.style.textDecoration = "none";
+    link.style.color = "#222";
+    title.appendChild(link);
+
+    const type = document.createElement("p");
+    type.innerHTML = `<small>${p.category || ""} ${p.subcategory ? "– " + p.subcategory : ""}</small>`;
+
+    const price = document.createElement("p");
+    price.innerHTML = "<strong>USD " + (p.price || 0).toFixed(2) + "</strong>";
+
+    card.appendChild(img);
+    card.appendChild(title);
+    card.appendChild(type);
+    card.appendChild(price);
+
+    featuredGrid.appendChild(card);
+  });
+}
+
+loadFeatured();
 </script>
+
+<!-- ⭐ DYNAMIC HEADER LOADER (ALWAYS LAST) -->
+<script type="module">
+async function loadHeader() {
+  const container = document.getElementById('header-placeholder');
+  const res = await fetch('/header.html');
+  container.innerHTML = await res.text();
+  document.dispatchEvent(new Event('header:loaded'));
+}
+loadHeader();
+</script>
+
+<script type="module" src="/js/supabaseClient.js"></script>
+<script type="module" src="/js/header.js"></script>
 
 </body>
 </html>
