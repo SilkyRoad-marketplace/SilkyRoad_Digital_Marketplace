@@ -10,10 +10,6 @@
 
 <meta name="description" content="Discover Silky Road, a full-featured digital marketplace to buy and sell eBooks, templates, creative assets, online courses and music. Secure PayPal payments, instant delivery, seller dashboard, and no upfront fees.">
 <meta name="keywords" content="digital marketplace, buy digital products, sell digital products, instant downloads, ebooks, art downloads, music, photography, E-commerce platform, online store">
-
-<style>
-/* (Your existing CSS unchanged, no need to repeat for clarity) */
-</style>
 </head>
 
 <body>
@@ -53,7 +49,53 @@ Creators can join Silky Road for free and start selling immediately without any 
 
 <!-- ⭐ CATEGORY BAR -->
 <div class="category-bar">
-  <!-- (Your category list unchanged) -->
+  <div class="all-category">🏷️ All
+    <ul><li><a href="category.html?category=All">All Products</a></li></ul>
+  </div>
+
+  <div>📚 Educational
+    <ul>
+      <li><a href="category.html?category=Educational&sub=eBooks">eBooks</a></li>
+      <li><a href="category.html?category=Educational&sub=Online Courses">Online Courses</a></li>
+      <li><a href="category.html?category=Educational&sub=Worksheets">Worksheets</a></li>
+      <li><a href="category.html?category=Educational&sub=Tutorials">Tutorials</a></li>
+      <li><a href="category.html?category=Educational&sub=Digital Workbooks">Digital Workbooks</a></li>
+    </ul>
+  </div>
+
+  <div>🎨 Creative Assets
+    <ul>
+      <li><a href="category.html?category=Creative Assets&sub=Stock Photos">Stock Photos</a></li>
+      <li><a href="category.html?category=Creative Assets&sub=Videos">Videos</a></li>
+      <li><a href="category.html?category=Creative Assets&sub=Music / Audio Tracks">Music / Audio Tracks</a></li>
+      <li><a href="category.html?category=Creative Assets&sub=Sound Effects">Sound Effects</a></li>
+      <li><a href="category.html?category=Creative Assets&sub=Digital Art">Digital Art</a></li>
+      <li><a href="category.html?category=Creative Assets&sub=Fonts">Fonts</a></li>
+      <li><a href="category.html?category=Creative Assets&sub=Brushes">Brushes</a></li>
+      <li><a href="category.html?category=Creative Assets&sub=Lightroom Presets">Lightroom Presets</a></li>
+    </ul>
+  </div>
+
+  <div>📈 Productivity
+    <ul>
+      <li><a href="category.html?category=Productivity&sub=Planners">Planners</a></li>
+      <li><a href="category.html?category=Productivity&sub=Journals">Journals</a></li>
+      <li><a href="category.html?category=Productivity&sub=Social Media Packs">Social Media Packs</a></li>
+      <li><a href="category.html?category=Productivity&sub=Business Templates">Business Templates</a></li>
+      <li><a href="category.html?category=Productivity&sub=Spreadsheets">Spreadsheets</a></li>
+      <li><a href="category.html?category=Productivity&sub=Notion Templates">Notion Templates</a></li>
+    </ul>
+  </div>
+
+  <div>📁 Templates
+    <ul>
+      <li><a href="category.html?category=Templates&sub=Canva Templates">Canva Templates</a></li>
+      <li><a href="category.html?category=Templates&sub=Digital Stickers">Digital Stickers</a></li>
+      <li><a href="category.html?category=Templates&sub=Printable Games">Printable Games</a></li>
+      <li><a href="category.html?category=Templates&sub=Craft Patterns">Craft Patterns</a></li>
+      <li><a href="category.html?category=Templates&sub=Email Templates">Email Templates</a></li>
+    </ul>
+  </div>
 </div>
 
 <section class="main">
@@ -75,7 +117,6 @@ fetch("footer.html?v=2")
 
 <!-- ⭐ Load Featured Products -->
 <script type="module">
-// ⛔ Load Supabase first
 import client from "./js/supabaseClient.js";
 const supabase = client;
 
@@ -107,8 +148,6 @@ async function loadFeatured() {
     const img = document.createElement("img");
     img.src = p.thumbnail_url || "placeholder.jpg";
     img.alt = p.title || "Product";
-    img.style.width = "100%";
-    img.style.borderRadius = "6px";
     img.style.cursor = "pointer";
     img.addEventListener("click", () => {
       window.location.href = "product.html?id=" + p.id;
@@ -140,7 +179,7 @@ async function loadFeatured() {
 loadFeatured();
 </script>
 
-<!-- ⭐ DYNAMIC HEADER LOADER (ALWAYS LAST) -->
+<!-- ⭐ DYNAMIC HEADER LOADER -->
 <script type="module">
 async function loadHeader() {
   const container = document.getElementById('header-placeholder');
