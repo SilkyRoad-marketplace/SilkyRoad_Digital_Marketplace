@@ -1,10 +1,14 @@
 import nodemailer from "nodemailer";
 
 export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
   try {
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
+      port: parseInt(process.env.SMTP_PORT),
       secure: true,
       auth: {
         user: process.env.SMTP_USER,
@@ -19,9 +23,9 @@ export default async function handler(req, res) {
       html: req.body.html
     });
 
-    return res.status(200).json({ success: true, message: "Email sent", info });
+    return res.status(200).json({ success: true, info });
   } catch (err) {
-    console.error("Email error:", err);
-    return res.status(500).json({ success: false, error: err.message });
+    console.error("EMAIL_ERROR:", err);
+    return res.status(500).json({ error: err.message });
   }
 }
